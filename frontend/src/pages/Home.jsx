@@ -9,7 +9,19 @@ export default function Home(){
     <div>
       <div className="jumbotron p-4 rounded bg-light mb-4">
         <h1>Welcome to E‑Shop</h1>
-        <p className="lead">A demo e‑commerce project built with React + Node.js — perfect for your project/portfolio.</p>
+        <p className="lead">A e‑commerce project built with React + Node.js — This project is currently deployed with frontend only on Netlify.
+
+✅ Frontend is fully functional and showcases the UI, authentication pages, cart, and admin panel.
+
+⚡ Backend (Node.js, Express, MongoDB) is fully implemented and available in this repository, but it is not connected in the live Netlify demo due to hosting/database limitations.
+
+🛠️ All backend routes (authentication, product management, cart, orders) are implemented and tested locally.
+
+📸 Screenshots of the full-stack version (with backend and product data) are included in the repository.
+
+👉 Live Demo (Frontend Only): https://your-netlify-url.netlify.app
+
+👉 Full Code (Frontend + Backend): GitHub Repo</p>
         <Link to="/products" className="btn btn-success">Browse Products</Link>
       </div>
       <h4>Featured</h4>
