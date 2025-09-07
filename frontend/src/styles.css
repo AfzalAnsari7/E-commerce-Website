@@ -1,0 +1,1 @@
+body { background: #f8f9fa; } .jumbotron { padding: 2rem; border-radius: 0.5rem; } .card { transition: transform .12s ease; } .card:hover { transform: translateY(-4px); }

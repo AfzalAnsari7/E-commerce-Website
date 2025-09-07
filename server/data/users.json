@@ -1,0 +1,16 @@
+[
+  {
+    "id": "u1",
+    "name": "Admin",
+    "email": "admin@admin.com",
+    "password": "$2b$12$D0ud0OgPYDOjsnKYazc2i.mWT4D0cdOXR5paB76PI6Nw4exK6/GnS",
+    "isAdmin": true
+  },
+  {
+    "id": "ckIEFaNQ",
+    "name": "Afzal",
+    "email": "emathslearnerto3640592@gmail.com",
+    "password": "$2a$08$Inrh4/66EpZbUiP0okwCye4cZiqzeQK0ic0aYrPW5THUZsYom6vRG",
+    "isAdmin": false
+  }
+]
