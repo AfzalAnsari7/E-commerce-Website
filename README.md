@@ -33,3 +33,6 @@ cd frontend
 npm install
 cd ../server
 npm install
+
+<img width="1897" height="838" alt="image" src="https://github.com/user-attachments/assets/af555caa-a5cd-424c-8687-a6c2c36ca616" />
+
