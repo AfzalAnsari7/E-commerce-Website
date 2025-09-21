@@ -14,7 +14,7 @@ const demoProducts = [
     title: "Adidas Ultraboost 22",
     price: 9999,
     category: "Shoes",
-    image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/ultraboost-22-shoes.png",
+    image: "https://www.shoebacca.com/cdn/shop/files/GX9167_1l.jpg?crop=center&v=1734154314&width=1600",
     description: "Comfortable running shoes with energy-returning midsole."
   },
   {
@@ -22,7 +22,7 @@ const demoProducts = [
     title: "Levi's 501 Original Fit Jeans",
     price: 3499,
     category: "Clothes",
-    image: "https://lsco.scene7.com/is/image/lsco/00501-1103-front-pdp.png",
+    image: "https://lsco.scene7.com/is/image/lsco/005013337-front-pdp?fmt=webp&qlt=70&resMode=sharp2&fit=crop,1&op_usm=0.6,0.6,8&wid=1760&hei=1760",
     description: "Classic straight fit jeans with timeless style."
   },
   {
@@ -38,7 +38,7 @@ const demoProducts = [
     title: "Apple iPhone 15",
     price: 79900,
     category: "Electronics",
-    image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-select-202309?wid=940&hei=1112&fmt=png-alpha&.v=1694410738390",
+    image: "https://ss7.vzw.com/is/image/VerizonWireless/apple-iphone-15-128gb-blue-prepaid-mtpm3ll-a-a?wid=400&hei=400&fmt=webp-alpha",
     description: "Latest Apple smartphone with advanced camera and A17 chip."
   },
   {
@@ -46,7 +46,7 @@ const demoProducts = [
     title: "Samsung Galaxy S23",
     price: 69999,
     category: "Electronics",
-    image: "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s911ezahinu/gallery/in-galaxy-s23-s911-444749-sm-s911ezahinu-530657764?$684_547_PNG$",
+    image: "https://www.backmarket.com/cdn-cgi/image/format%3Dauto%2Cquality%3D75%2Cwidth%3D640/https://d2e6ccujb3mkqf.cloudfront.net/1c654c24-0fb6-4bf1-89a0-0003537e7420-1_9241f19e-ed61-477a-abbc-b23cf56bcfa5.jpg",
     description: "High-performance Android smartphone with stunning display."
   },
   {
@@ -62,7 +62,7 @@ const demoProducts = [
     title: "Ray-Ban Aviator Sunglasses",
     price: 7999,
     category: "Accessories",
-    image: "https://images.ray-ban.com/is/image/RayBan/805289602743__001.png",
+    image: "https://images2.ray-ban.com//cdn-record-files-pi/9a59aa73-4afe-4bf8-a912-a73d00112ebf/482d4655-08d6-47fa-818d-ad1b006d2fcb/0RB3025__903578__STD__shad__qt.png?impolicy=RB_Product_clone&width=720&bgc=%23f2f2f2",
     description: "Classic aviator sunglasses with UV protection."
   },
   {
@@ -70,7 +70,7 @@ const demoProducts = [
     title: "Fossil Men's Watch",
     price: 5999,
     category: "Accessories",
-    image: "https://www.fossil.com/on/demandware.static/-/Sites-fossil-master/default/dw2d9f16b4/men%27s-watch.png",
+    image: "https://cdn2.jomashop.com/media/catalog/product/cache/0ee3019724ce73007b606b54ba535a23/f/o/fossil-nate-chronograph-black-dial-black-ion-plated-men_s-watch-jr1401.jpg?width=546&height=546",
     description: "Stylish analog watch with leather strap."
   },
   {
@@ -86,7 +86,7 @@ const demoProducts = [
     title: "Apple MacBook Air M2",
     price: 119900,
     category: "Electronics",
-    image: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-m2-gold-select-202206?wid=904&hei=840&fmt=jpeg&qlt=80&.v=1664497359481",
+    image: "https://www.backmarket.com/cdn-cgi/image/format%3Dauto%2Cquality%3D75%2Cwidth%3D640/https://d2e6ccujb3mkqf.cloudfront.net/7f783d1a-2f3a-4396-b079-b658ad12cccc-1_8f6dd278-4927-4c48-8138-acde4022576d.jpg",
     description: "Ultra-thin laptop with M2 chip, perfect for productivity and creativity."
   },
   {
@@ -94,7 +94,7 @@ const demoProducts = [
     title: "Canon EOS 200D DSLR Camera",
     price: 45999,
     category: "Electronics",
-    image: "https://m.media-amazon.com/images/I/81p1L1D2ZnL._SL1500_.jpg",
+    image: "https://www.backscatter.com/ITEM_IMAGES/cn-2249c002_1.jpg?resizeid=7&resizeh=1000&resizew=1000",
     description: "Compact DSLR camera with excellent image quality for beginners and enthusiasts."
   }
 ]
