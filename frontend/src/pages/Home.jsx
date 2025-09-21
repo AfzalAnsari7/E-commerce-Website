@@ -30,7 +30,7 @@ export default function Home(){
 
 👉 Full Code (Frontend + Backend): GitHub Repo
           </p>
-          <Link to="/products" className="btn btn-success">Browse Products</Link>
+          <Link to="/products" className="btn btn-success">Click Here => Browse Products</Link>
         </div>
         <h4>Featured</h4>
         <div className="row g-3">
