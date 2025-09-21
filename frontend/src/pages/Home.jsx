@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import api from '../services'
 import ProductCard from '../components/ProductCard'
 import { Link } from 'react-router-dom'
-import './Home.css'  // Import the CSS file
-
 export default function Home(){
   const [products, setProducts] = useState([])
   useEffect(()=>{ 
