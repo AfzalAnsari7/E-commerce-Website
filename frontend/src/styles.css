@@ -1,1 +1,36 @@
-body { background: #f8f9fa; } .jumbotron { padding: 2rem; border-radius: 0.5rem; } .card { transition: transform .12s ease; } .card:hover { transform: translateY(-4px); }
+/* Existing styles */
+body {
+  background: #f8f9fa;
+}
+
+.jumbotron {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.9); /* Slight transparency for fade effect */
+  color: #000;
+}
+
+.card {
+  transition: transform .12s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* New background for Home.js */
+.home-background {
+  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA3bif10mn0q1PYMOSXpm-6snj5qfTQwYHfw&s');
+  background-size: cover;       /* Cover full screen */
+  background-position: center;  /* Center the image */
+  background-repeat: no-repeat; /* No repeat */
+  min-height: 100vh;            /* Full viewport height */
+  position: relative;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black fade */
+  min-height: 100vh;
+  padding: 20px;
+  color: white; /* Makes text readable over background */
+}
