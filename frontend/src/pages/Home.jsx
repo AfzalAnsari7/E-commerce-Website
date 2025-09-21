@@ -26,7 +26,7 @@ export default function Home(){
 
 📸 Screenshots of the full-stack version (with backend and product data) are included in the repository.
 
-👉 Live Demo (Frontend Only): https://your-netlify-url.netlify.app
+👉 Live Demo (Frontend Only): https://smart-e-commerce.netlify.app/
 
 👉 Full Code (Frontend + Backend): GitHub Repo
           </p>
