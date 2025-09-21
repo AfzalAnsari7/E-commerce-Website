@@ -2,14 +2,23 @@ import React, { useEffect, useState } from 'react'
 import api from '../services'
 import ProductCard from '../components/ProductCard'
 import { Link } from 'react-router-dom'
+import './Home.css'  // Import the CSS file
+
 export default function Home(){
   const [products, setProducts] = useState([])
-  useEffect(()=>{ api.get('/api/products').then(res => setProducts(res.data.slice(0,6))).catch(()=>{}) },[])
+  useEffect(()=>{ 
+    api.get('/api/products')
+      .then(res => setProducts(res.data.slice(0,6)))
+      .catch(()=>{}) 
+  },[])
+
   return (
-    <div>
-      <div className="jumbotron p-4 rounded bg-light mb-4">
-        <h1>Welcome to E‑Shop</h1>
-        <p className="lead">A e‑commerce project built with React + Node.js — This project is currently deployed with frontend only on Netlify.
+    <div className="home-background">  {/* Wrap content with this div */}
+      <div className="overlay"> {/* Optional: fade overlay */}
+        <div className="jumbotron p-4 rounded bg-light mb-4">
+          <h1>Welcome to E‑Shop</h1>
+          <p className="lead">
+            A e‑commerce project built with React + Node.js — This project is currently deployed with frontend only on Netlify.
 
 ✅ Frontend is fully functional and showcases the UI, authentication pages, cart, and admin panel.
 
@@ -21,12 +30,18 @@ export default function Home(){
 
 👉 Live Demo (Frontend Only): https://your-netlify-url.netlify.app
 
-👉 Full Code (Frontend + Backend): GitHub Repo</p>
-        <Link to="/products" className="btn btn-success">Browse Products</Link>
-      </div>
-      <h4>Featured</h4>
-      <div className="row g-3">
-        {products.map(p=> (<div className="col-sm-6 col-md-4" key={p.id}><ProductCard product={p} /></div>))}
+👉 Full Code (Frontend + Backend): GitHub Repo
+          </p>
+          <Link to="/products" className="btn btn-success">Browse Products</Link>
+        </div>
+        <h4>Featured</h4>
+        <div className="row g-3">
+          {products.map(p=> (
+            <div className="col-sm-6 col-md-4" key={p.id}>
+              <ProductCard product={p} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
