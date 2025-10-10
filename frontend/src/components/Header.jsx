@@ -10,12 +10,6 @@ export default function Header(){
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         <Link className="navbar-brand" to="/">E‑Shop</Link>
-        <div>
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item"><Link className="nav-link" to="/products">Products</Link></li>
-            {user && user.isAdmin && <li className="nav-item"><Link className="nav-link" to="/admin">Admin</Link></li>}
-          </ul>
-        </div>
         <div className="d-flex gap-2 align-items-center">
           {!user && <Link to="/login" className="btn btn-outline-light">Login</Link>}
           {!user && <Link to="/register" className="btn btn-outline-light">Register</Link>}
