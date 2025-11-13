@@ -9,7 +9,7 @@ export default function Home(){
     <div>
       <div className="jumbotron p-4 rounded bg-light mb-4">
         <h1>Welcome to E‑Shop</h1>
-        <p className="lead">A demo e‑commerce project built with React + Node.js — perfect for your project/portfolio.</p>
+        <p className="lead">A e‑commerce project built with React + Node.js</p>
         <Link to="/products" className="btn btn-success">Browse Products</Link>
       </div>
       <h4>Featured</h4>
