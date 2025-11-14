@@ -9,6 +9,7 @@ export default function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-black">
       <div className="container">
+<<<<<<< HEAD
         <Link className="navbar-brand" to="/">
           E‑Shop
         </Link>
@@ -23,6 +24,9 @@ export default function Header() {
             )}
           </ul>
         </div>
+=======
+        <Link className="navbar-brand" to="/">E‑Shop</Link>
+>>>>>>> 2ac8b564e21c10617e36b0b7397f25acc5352c91
         <div className="d-flex gap-2 align-items-center">
           {!user && (
             <Link to="/login" className="btn btn-outline-light">
