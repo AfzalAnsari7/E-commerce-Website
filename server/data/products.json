@@ -40,5 +40,12 @@
     "price": 1299,
     "image": "https://picsum.photos/seed/sunglasses/600/400",
     "description": "UV-protection stylish sunglasses."
+  },
+  {
+    "id": "TTNCfyBv",
+    "title": "Camera Photography",
+    "price": 52000,
+    "image": "https://images.pexels.com/photos/598917/pexels-photo-598917.jpeg",
+    "description": "A camera image, also known as a photograph, is a visual recording made by a camera when light falls onto a light-sensitive surface, such as photographic film or a digital sensor. The process involves light passing through the camera lens and striking the sensor when the shutter opens for a brief exposure period."
   }
 ]

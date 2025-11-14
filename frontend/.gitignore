@@ -1,4 +1,45 @@
+
+# Ensure consistent line endings
+* text=auto
+*.json text
+*.js text
+*.jsx text
+*.css text
+
+
+
 node_modules
 .dist
 .env
 .vscode
+.gitignore
+.env
+
+# Node modules
+node_modules/
+server/node_modules/
+frontend/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+server/.env
+frontend/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build folders
+frontend/dist/
+frontend/build/
+server/dist/
+
+# Lock files (optional, if you want to commit them, you can remove these)
+# package-lock.json
+# yarn.lock
