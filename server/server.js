@@ -17,10 +17,39 @@ const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
 const productsFile = path.join(__dirname, "data", "products.json");
 const usersFile = path.join(__dirname, "data", "users.json");
 
-app.use(cors());
+// ----------------------
+// CORS
+// ----------------------
+const allowedOrigins = [
+  'https://smart-e-commerce.netlify.app',
+  'http://localhost:5173'
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'CORS policy: This origin is not allowed';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET','POST','PUT','DELETE'],
+  credentials: true
+}));
+
+// handle preflight
+app.options('*', cors());
+
+// ----------------------
+// Middleware
+// ----------------------
 app.use(express.json());
 
+// ----------------------
 // Helper functions
+// ----------------------
 function readJSON(file) {
   return JSON.parse(fs.readFileSync(file));
 }
@@ -31,7 +60,7 @@ function writeJSON(file, data) {
 // ----------------------
 // OTP SYSTEM
 // ----------------------
-const otpStore = {}; // { email: { otp, expiresAt, attempts, lockedUntil } }
+const otpStore = {}; // { email: { otp, expiresAt, attempts } }
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -54,19 +83,22 @@ function htmlOtpTemplate(name, otp) {
 async function createTransporter() {
   if (process.env.USE_ETHEREAL === "true") {
     const testAccount = await nodemailer.createTestAccount();
-    console.log("Ethereal account:", testAccount); // for previewing credentials
+    console.log("Ethereal account:", testAccount);
     return nodemailer.createTransport({
       host: "smtp.ethereal.email",
       port: 587,
-      auth: { user: testAccount.user, pass: testAccount.pass },
+      auth: { user: testAccount.user, pass: testAccount.pass }
     });
   } else {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      throw new Error("SMTP_USER and SMTP_PASS must be set in environment variables");
+    }
     return nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.SMTP_USER || "yourgmail@gmail.com",
-        pass: process.env.SMTP_PASS || "yourapppassword",
-      },
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+      }
     });
   }
 }
@@ -75,36 +107,36 @@ async function createTransporter() {
 // AUTH + OTP ROUTES
 // ----------------------
 
-// Step 1: Request OTP
+// Request OTP
 app.post("/api/auth/request-otp", async (req, res) => {
   const { name, email, password } = req.body;
-  if (!name || !email || !password)
-    return res.status(400).json({ message: "Missing fields" });
+  if (!name || !email || !password) return res.status(400).json({ message: "Missing fields" });
 
-  // Check if email already exists
   const users = readJSON(usersFile);
-  if (users.find(u => u.email === email))
-    return res.status(400).json({ message: "Email already exists" });
+  if (users.find(u => u.email === email)) return res.status(400).json({ message: "Email already exists" });
 
   const otp = generateOtp();
-  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes
-  otpStore[email] = { otp, expiresAt, attempts: 0 };
+  otpStore[email] = { otp, expiresAt: Date.now() + 5*60*1000, attempts: 0 };
 
-  const transporter = await createTransporter();
-  const info = await transporter.sendMail({
-    from: '"E-Shop" <no-reply@eshop.com>',
-    to: email,
-    subject: "Verify your email",
-    html: htmlOtpTemplate(name, otp)
-  });
+  try {
+    const transporter = await createTransporter();
+    const info = await transporter.sendMail({
+      from: '"E-Shop" <no-reply@eshop.com>',
+      to: email,
+      subject: "Verify your email",
+      html: htmlOtpTemplate(name, otp)
+    });
 
-  // For Ethereal testing only
-  const preview = nodemailer.getTestMessageUrl(info);
+    const preview = nodemailer.getTestMessageUrl(info);
+    return res.json({ message: "OTP sent", preview });
 
-  res.json({ message: "OTP sent", preview });
+  } catch (err) {
+    console.error("Email sending failed:", err.message);
+    return res.status(500).json({ message: "Failed to send OTP email" });
+  }
 });
 
-// Step 2: Verify OTP
+// Verify OTP
 app.post("/api/auth/verify-otp", (req, res) => {
   const { email, otp, name, password } = req.body;
   if (!email || !otp) return res.status(400).json({ message: "Missing fields" });
@@ -114,14 +146,13 @@ app.post("/api/auth/verify-otp", (req, res) => {
   if (Date.now() > record.expiresAt) return res.status(400).json({ message: "OTP expired" });
   if (record.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
 
-  // OTP correct — create user
   const users = readJSON(usersFile);
   const hashed = bcrypt.hashSync(password, 8);
   const newUser = { id: nanoid(8), name, email, password: hashed, isAdmin: false };
   users.push(newUser);
   writeJSON(usersFile, users);
 
-  delete otpStore[email]; // clear OTP
+  delete otpStore[email];
 
   const token = jwt.sign({ id: newUser.id, email: newUser.email, isAdmin: newUser.isAdmin }, JWT_SECRET, { expiresIn: "7d" });
   res.json({
@@ -131,9 +162,7 @@ app.post("/api/auth/verify-otp", (req, res) => {
   });
 });
 
-// ----------------------
-// LOGIN
-// ----------------------
+// Login
 app.post("/api/auth/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: "Missing fields" });
@@ -149,9 +178,7 @@ app.post("/api/auth/login", (req, res) => {
   res.json({ token, user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin } });
 });
 
-// ----------------------
-// PRODUCTS
-// ----------------------
+// Products
 app.get("/api/products", (req, res) => {
   const products = readJSON(productsFile);
   res.json(products);
@@ -164,9 +191,7 @@ app.get("/api/products/:id", (req, res) => {
   res.json(p);
 });
 
-// ----------------------
-// ADMIN PROTECTED
-// ----------------------
+// Auth middleware
 function authMiddleware(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ message: "Unauthorized" });
@@ -180,6 +205,7 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Admin product route
 app.post("/api/admin/products", authMiddleware, (req, res) => {
   if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
   const { title, price, image, description } = req.body;
@@ -192,9 +218,7 @@ app.post("/api/admin/products", authMiddleware, (req, res) => {
   res.json(newProduct);
 });
 
-// ----------------------
-// ORDERS
-// ----------------------
+// Orders
 app.post("/api/orders", authMiddleware, (req, res) => {
   const { items } = req.body;
   if (!items || !Array.isArray(items)) return res.status(400).json({ message: "Invalid order" });
@@ -202,5 +226,5 @@ app.post("/api/orders", authMiddleware, (req, res) => {
   res.json({ orderId, itemsCount: items.length });
 });
 
-// ----------------------
-app.listen(PORT, () => console.log("Server running on", PORT));
+// Start server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
