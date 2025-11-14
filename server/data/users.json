@@ -1,16 +1,16 @@
 [
   {
-    "id": "u1",
-    "name": "Admin",
-    "email": "admin@admin.com",
-    "password": "$2b$12$D0ud0OgPYDOjsnKYazc2i.mWT4D0cdOXR5paB76PI6Nw4exK6/GnS",
+    "id": "RGkEI9H1",
+    "name": "Afzal",
+    "email": "emathslearnerto3640592@gmail.com",
+    "password": "$2a$08$74He.Wf14G5zKvUUdZ4L8.BI48jaWmRYIKM8pct2ofZpV.jLz7hde",
     "isAdmin": true
   },
   {
-    "id": "ckIEFaNQ",
-    "name": "Afzal",
-    "email": "emathslearnerto3640592@gmail.com",
-    "password": "$2a$08$Inrh4/66EpZbUiP0okwCye4cZiqzeQK0ic0aYrPW5THUZsYom6vRG",
+    "id": "9BVN2mpo",
+    "name": "Afzal Ansari",
+    "email": "afzalansarisaddam@gmail.com",
+    "password": "$2a$08$EWvqwKGOdWtA36LTEtD4EOXhQusOGTMUk.8/43PdvyT3.rll8nauy",
     "isAdmin": false
   },
   {
