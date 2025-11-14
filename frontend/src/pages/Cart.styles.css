@@ -1,0 +1,140 @@
+.cart-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.description {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+.details-right h1 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #ffffff;
+}
+.cart-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: white;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 50px 0;
+  font-size: 22px;
+  color: #fdf9f9;
+}
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cart-item {
+    color: black;
+  display: grid;
+  grid-template-columns: 1fr 100px 100px 60px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 14px;
+  background: #5c582ed6;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.item-details h4 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.price {
+  color: #dedbc1;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.qty-input {
+  width: 80px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.item-total {
+  font-weight: bold;
+  color: #000000;
+}
+
+.remove-btn {
+  border: none;
+  background: #ff4d4d;
+  color: rgb(0, 0, 0);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.remove-btn:hover {
+  background: #e51616;
+}
+
+.cart-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+
+.clear-btn,
+.order-btn {
+  padding: 12px 22px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-left: 10px;
+  transition: 0.3s;
+}
+
+.clear-btn {
+  background: #ddd;
+}
+
+.clear-btn:hover {
+  background: #c2c2c2;
+}
+
+.order-btn {
+  background: #f4cb03;
+  color: rgb(0, 0, 0);
+}
+
+.order-btn:hover {
+  background: #f9fbfa;
+}
+
+@media (max-width: 700px) {
+  .cart-item {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 15px;
+  }
+
+  .qty-input {
+    width: 60px;
+  }
+
+  .cart-footer {
+    flex-direction: column;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,37 @@
+/* Product List Page Background */
+.product-list-page {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+/* Page Heading */
+.product-list-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  text-align: center;
+  color: #ffffff;
+}
+
+/* Grid Styling */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 10px;
+}
+
+/* Product Card */
+.product-card {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}

@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import api from "../services";
 import ProductCard from "../components/ProductCard";
 import { Link } from "react-router-dom";
-
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -16,63 +14,50 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <div>
-        <h1>Hii,</h1>
-        <h1>Welcome to E‑Shop</h1>
-      </div>
-      {/* <h4>Featured</h4> */}
-      <div className="row g-3">
-        {products.map((p) => (
-          <div className="col-sm-6 col-md-4" key={p.id}>
-            <ProductCard product={p} />
-          </div>
-        ))}
-=======
-import React, { useEffect, useState } from 'react'
-import api from '../services'
-import ProductCard from '../components/ProductCard'
-import { Link } from 'react-router-dom'
-export default function Home(){
-  const [products, setProducts] = useState([])
-  useEffect(()=>{ 
-    api.get('/api/products')
-      .then(res => setProducts(res.data.slice(0,6)))
-      .catch(()=>{}) 
-  },[])
+    <div className="home-page">
 
-  return (
-    <div className="home-background">  {/* Wrap content with this div */}
-      <div className="overlay"> {/* Optional: fade overlay */}
-        <div className="jumbotron p-4 rounded bg-light mb-4">
-          <h1>Welcome to E‑Shop</h1>
-          <p className="lead">
-            A e‑commerce project built with React + Node.js — This project is currently deployed with frontend only on Netlify.
+      {/* Hero Section */}
+      <section className="hero-section d-flex align-items-center justify-content-center text-center text-light">
+        <div className="container py-5">
+          <h1 className="display-4 fw-bold mb-3">
+            Welcome to <span className="text-warning">E-Shop</span>
+          </h1>
 
-✅ Frontend is fully functional and showcases the UI, authentication pages, cart, and admin panel.
+          <p className="lead mb-4">
+            Discover exclusive deals, discounts and premium products.
 
-⚡ Backend (Node.js, Express, MongoDB) is fully implemented and available in this repository, but it is not connected in the live Netlify demo due to hosting/database limitations.
-
-🛠️ All backend routes (authentication, product management, cart, orders) are implemented and tested locally.
-
-📸 Screenshots of the full-stack version (with backend and product data) are included in the repository.
-
-👉 Live Demo (Frontend Only): https://smart-e-commerce.netlify.app/
-
-👉 Full Code (Frontend + Backend): GitHub Repo
           </p>
-          <Link to="/products" className="btn btn-success">Click Here => Browse Products</Link>
+
+          <Link to="/products" className="btn btn-warning btn-lg px-4">
+            Browse Products
+          </Link>
         </div>
-        <h4>Featured</h4>
-        <div className="row g-3">
-          {products.map(p=> (
-            <div className="col-sm-6 col-md-4" key={p.id}>
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
->>>>>>> 2ac8b564e21c10617e36b0b7397f25acc5352c91
-      </div>
+      </section>
+
+
+
+      {/* Footer Section */}
+<footer className="footer-section">
+  <div className="footer-inner">
+    <h5>E-Shop</h5>
+
+    <p className="small">
+      Your trusted platform for smart and secure shopping.
+    </p>
+
+    <div className="footer-links">
+      <a href="#">Home</a>
+      <a href="#">Products</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+
+    <p className="footer-copy">
+      © {new Date().getFullYear()} E-Shop. All rights reserved.
+    </p>
+  </div>
+</footer>
+
     </div>
   );
 }

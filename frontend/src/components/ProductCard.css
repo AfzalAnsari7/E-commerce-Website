@@ -1,0 +1,39 @@
+/* Modern Product Card */
+
+.card {
+  border-radius: 16px !important;
+  overflow: hidden;
+  background: #ba8d8d;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+  border-bottom: 1px solid #eee;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.card-text {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #e67e22 !important;
+}
+
+.card .btn-primary {
+  background: #f39c12;
+  border: none;
+  transition: 0.2s ease;
+}
+
+.card .btn-primary:hover {
+  background: #d9830c;
+}
