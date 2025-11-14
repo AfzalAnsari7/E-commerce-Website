@@ -12,5 +12,12 @@
     "email": "emathslearnerto3640592@gmail.com",
     "password": "$2a$08$Inrh4/66EpZbUiP0okwCye4cZiqzeQK0ic0aYrPW5THUZsYom6vRG",
     "isAdmin": false
+  },
+  {
+    "id": "dAx75-XJ",
+    "name": "kjj",
+    "email": "lk@gmail.com",
+    "password": "$2a$08$JM9wgFyrddAZoAbzpNetxewX4v7eGTdwFvHsLSDiVjA/THac5VFH6",
+    "isAdmin": false
   }
 ]
