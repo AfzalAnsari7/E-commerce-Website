@@ -6,13 +6,13 @@ import "./Home.styles.css";
 
 const SLIDES = [
   {
-    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&q=80",
+    img: "https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=1920&q=80",
     top: "EXPLORE",
-    title: "ACCESSORIES",
-    tags: "PERFUMES | BACKPACKS | CAPS | SOCKS",
+    title: "SUMMER '26",
+    tags: "TEES | SHORTS | LINEN | SHADES",
   },
   {
-    img: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80",
+    img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=1920&q=80",
     top: "NEW DROP",
     title: "OVERSIZED TEES",
     tags: "GRAPHIC | PLAIN | ANIME | PRINTS",
@@ -24,10 +24,10 @@ const SLIDES = [
     tags: "RUNNING | CASUAL | HIGH-TOPS",
   },
   {
-    img: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1920&q=80",
-    top: "WINTER EDIT",
-    title: "HOODIES",
-    tags: "ZIPPERS | PULLOVERS | SWEATSHIRTS",
+    img: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&q=80",
+    top: "BEACH READY",
+    title: "SUMMER VIBES",
+    tags: "TANKS | SHORTS | SUNGLASSES",
   },
 ];
 
