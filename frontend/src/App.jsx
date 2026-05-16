@@ -7,9 +7,13 @@ import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import VerifyOTP from './pages/VerifyOTP'
+import ForgotPassword from './pages/ForgotPassword'
 import Admin from './pages/Admin'
 import Wishlist from './pages/Wishlist'
 import OrderConfirmation from './pages/OrderConfirmation'
+import Checkout from './pages/Checkout'
+import Orders from './pages/Orders'
+import Addresses from './pages/Addresses'
 import InfoPage from './pages/InfoPage'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -35,11 +39,15 @@ export default function App() {
             <Route path="/products" element={<ProductList />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/addresses" element={<Addresses />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order/:id" element={<OrderConfirmation />} />
             <Route path="/page/:slug" element={<InfoPage />} />
             <Route path="/verify-otp" element={<Contained><VerifyOTP /></Contained>} />
             <Route path="/login" element={<Contained><Login /></Contained>} />
+            <Route path="/forgot-password" element={<Contained><ForgotPassword /></Contained>} />
             <Route path="/register" element={<Contained><Register /></Contained>} />
             <Route path="/admin" element={<Contained><Admin /></Contained>} />
           </Routes>

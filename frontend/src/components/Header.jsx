@@ -150,11 +150,24 @@ export default function Header() {
                       Admin Panel
                     </Link>
                   )}
+                  <Link to="/orders" onClick={() => setAcctOpen(false)}>
+                    My Orders
+                  </Link>
+                  <Link to="/addresses" onClick={() => setAcctOpen(false)}>
+                    My Addresses
+                  </Link>
                   <Link to="/cart" onClick={() => setAcctOpen(false)}>
                     My Cart
                   </Link>
                   <Link to="/wishlist" onClick={() => setAcctOpen(false)}>
                     My Wishlist
+                  </Link>
+                  <Link
+                    to="/forgot-password"
+                    state={{ email: user.email }}
+                    onClick={() => setAcctOpen(false)}
+                  >
+                    Reset Password
                   </Link>
                   <button
                     onClick={() => {
@@ -241,7 +254,16 @@ export default function Header() {
           {user ? (
             <>
               {user.isAdmin && <Link to="/admin" className="ss-drawer-link">Admin Panel</Link>}
+              <Link to="/orders" className="ss-drawer-link">My Orders</Link>
+              <Link to="/addresses" className="ss-drawer-link">My Addresses</Link>
               <Link to="/cart" className="ss-drawer-link">My Cart ({totalItems})</Link>
+              <Link
+                to="/forgot-password"
+                state={{ email: user.email }}
+                className="ss-drawer-link"
+              >
+                Reset Password
+              </Link>
               <button
                 className="ss-drawer-link ss-drawer-logout"
                 onClick={logout}
