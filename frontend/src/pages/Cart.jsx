@@ -89,12 +89,17 @@ export default function Cart() {
                         value={p.size || ""}
                         onChange={(e) => updateSize(p.id, e.target.value)}
                       >
-                        {(Array.isArray(p.sizes) && p.sizes.length
-                          ? p.sizes
-                          : DEFAULT_SIZES
-                        ).map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
+                        {DEFAULT_SIZES.map((s) => {
+                          const avail =
+                            !Array.isArray(p.sizes) ||
+                            !p.sizes.length ||
+                            p.sizes.includes(s);
+                          return (
+                            <option key={s} value={s} disabled={!avail}>
+                              {s}{avail ? "" : " (out of stock)"}
+                            </option>
+                          );
+                        })}
                       </select>
                     </label>
                     {p.category && <span>Category: <strong>{p.category}</strong></span>}

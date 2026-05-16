@@ -158,15 +158,21 @@ export default function ProductDetails() {
               </button>
             </div>
             <div className="pd-size-list">
-              {availableSizes.map(s => (
-                <button
-                  key={s}
-                  className={`pd-size ${activeSize === s ? "active" : ""}`}
-                  onClick={() => setSize(s)}
-                >
-                  {s}
-                </button>
-              ))}
+              {SIZES.map(s => {
+                const avail = availableSizes.includes(s)
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    disabled={!avail}
+                    title={avail ? "" : "Out of stock"}
+                    className={`pd-size ${activeSize === s ? "active" : ""} ${avail ? "" : "unavailable"}`}
+                    onClick={() => avail && setSize(s)}
+                  >
+                    {s}
+                  </button>
+                )
+              })}
             </div>
           </div>
 

@@ -170,6 +170,26 @@
   border-color: var(--dark);
   color: #fff;
 }
+/* out-of-stock: shown but not selectable, with a red diagonal strike */
+.pd-size.unavailable,
+.pd-size:disabled {
+  color: #bdbdbd;
+  border-color: #e3e3e3;
+  cursor: not-allowed;
+  background: linear-gradient(
+    to top right,
+    #fafafa 0,
+    #fafafa calc(50% - 1px),
+    #e74c3c calc(50% - 1px),
+    #e74c3c calc(50% + 1px),
+    #fafafa calc(50% + 1px),
+    #fafafa 100%
+  );
+}
+.pd-size.unavailable:hover {
+  border-color: #e3e3e3;
+  transform: none;
+}
 
 /* Actions */
 .pd-actions {
