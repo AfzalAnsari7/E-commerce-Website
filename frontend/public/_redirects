@@ -1,0 +1,4 @@
+# SPA fallback: every route serves index.html so React Router
+# can handle it client-side (fixes 404 on refresh / direct links
+# like /forgot-password, /orders, /admin, etc.)
+/*    /index.html   200

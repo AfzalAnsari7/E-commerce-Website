@@ -1,0 +1,16 @@
+# Netlify build config for the React (Vite) frontend.
+# The backend (server/) is NOT deployed here — it runs separately
+# on Render. The frontend reaches it via the VITE_API_URL env var
+# (set in Netlify: Site settings -> Environment variables).
+
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+# SPA fallback (same effect as public/_redirects; kept here too
+# so the rule is version-controlled even if the file is missed).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
