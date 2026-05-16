@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services"; // your axios instance
+import PasswordInput from "../components/PasswordInput";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -57,15 +58,14 @@ export default function Register() {
           </div>
           <div className="mb-3">
             <label className="form-label" htmlFor="reg-password">Password</label>
-            <input
+            <PasswordInput
               id="reg-password"
               name="password"
-              type="password"
               autoComplete="new-password"
-              className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </div>
           <button className="btn btn-success">Send OTP</button>
