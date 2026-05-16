@@ -65,24 +65,32 @@ async function seedFromJSON() {
 // production frontend URL is supplied via the ALLOWED_ORIGINS env
 // var (comma-separated) so deploys don't need a code change.
 const allowedOrigins = [
-  'http://localhost:5173',
   ...(process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
     : ['https://smart-e-commerce.netlify.app'])
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('CORS policy: This origin is not allowed'), false);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET','POST','PUT','DELETE'],
-  credentials: true
-}));
-app.options('*', cors());
+// Returns true if the request origin may call this API. We never
+// throw here: an unlisted origin simply gets no CORS headers, so the
+// browser blocks it cleanly instead of the server returning a 500.
+function isAllowedOrigin(origin) {
+  // Non-browser callers (curl, server-to-server) send no Origin.
+  if (!origin) return true;
+  // Any localhost port for local dev (Vite may pick 5173, 5174, ...).
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+  return allowedOrigins.includes(origin);
+}
+
+const corsOptions = {
+  origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+// Same options for preflight and actual requests so they can't disagree.
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: "8mb" })); // headroom for review photos
 
@@ -467,6 +475,7 @@ app.get("/api/products", async (req, res) => {
     const products = await Product.find(filter).sort({ createdAt: 1 });
     res.json(products);
   } catch (err) {
+    console.error("load products failed:", err.message);
     res.status(500).json({ message: "Failed to load products" });
   }
 });
@@ -477,6 +486,7 @@ app.get("/api/products/:id", async (req, res) => {
     if (!p) return res.status(404).json({ message: "Not found" });
     res.json(p);
   } catch (err) {
+    console.error("load product failed:", err.message);
     res.status(500).json({ message: "Failed to load product" });
   }
 });
@@ -493,6 +503,7 @@ app.get("/api/products/:id/reviews", async (req, res) => {
       : 0;
     res.json({ average, count, reviews });
   } catch (err) {
+    console.error("load reviews failed:", err.message);
     res.status(500).json({ message: "Failed to load reviews" });
   }
 });
@@ -651,7 +662,8 @@ app.get("/api/addresses", authMiddleware, async (req, res) => {
     const u = await User.findOne({ id: req.user.id });
     if (!u) return res.status(404).json({ message: "User not found" });
     res.json(u.addresses || []);
-  } catch {
+  } catch (err) {
+    console.error("load addresses failed:", err.message);
     res.status(500).json({ message: "Failed to load addresses" });
   }
 });
@@ -903,7 +915,8 @@ app.get("/api/orders", authMiddleware, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
     res.json(orders.map(withTracking));
-  } catch {
+  } catch (err) {
+    console.error("load orders failed:", err.message);
     res.status(500).json({ message: "Failed to load orders" });
   }
 });
@@ -917,6 +930,7 @@ app.get("/api/orders/:id", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "Forbidden" });
     res.json(withTracking(order));
   } catch (err) {
+    console.error("load order failed:", err.message);
     res.status(500).json({ message: "Failed to load order" });
   }
 });
