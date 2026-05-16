@@ -14,9 +14,17 @@ export default function OrderConfirmation() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    api.get(`/api/orders/${id}`)
-      .then((res) => setOrder(res.data))
-      .catch((e) => setErr(e.response?.data?.message || "Could not load order"));
+    let alive = true;
+    const fetchOrder = () =>
+      api.get(`/api/orders/${id}`)
+        .then((res) => { if (alive) setOrder(res.data); })
+        .catch((e) => {
+          if (alive) setErr(e.response?.data?.message || "Could not load order");
+        });
+    fetchOrder();
+    // keep the tracking status fresh while the page is open
+    const t = setInterval(fetchOrder, 30000);
+    return () => { alive = false; clearInterval(t); };
   }, [id]);
 
   if (err) {
@@ -44,8 +52,101 @@ export default function OrderConfirmation() {
       {/* Success banner */}
       <div className="oc-success">
         <div className="oc-check">✓</div>
-        <h1>Order Confirmed!</h1>
-        <p>Thank you for shopping with Axen Wear. A confirmation has been recorded.</p>
+        <h1>{order.status === "delivered" ? "Delivered!" : "Order Confirmed!"}</h1>
+        <p>
+          Thank you for shopping with Axen Wear.{" "}
+          {order.status !== "delivered" && order.expectedDelivery && (
+            <>Arriving by{" "}
+              <strong>
+                {new Date(order.expectedDelivery).toLocaleDateString(undefined, {
+                  weekday: "short", day: "numeric", month: "long",
+                })}
+              </strong>
+            </>
+          )}
+        </p>
+      </div>
+
+      {/* Track Order */}
+      {Array.isArray(order.tracking) && order.tracking.length > 0 && (
+        <div className="oc-track">
+          <h2>
+            Track Order
+            <span className="oc-live">● Live · auto-updates</span>
+          </h2>
+          <div className="oc-steps">
+            {order.tracking.map((s, i) => (
+              <div
+                key={s.key}
+                className={`oc-step ${s.done ? "done" : ""} ${
+                  order.status === s.key ? "current" : ""
+                }`}
+              >
+                <span className="oc-dot">{s.done ? "✓" : i + 1}</span>
+                <div className="oc-step-txt">
+                  <strong>{s.label}</strong>
+                  <em>
+                    {new Date(s.at).toLocaleString(undefined, {
+                      day: "numeric", month: "short",
+                      hour: "2-digit", minute: "2-digit",
+                    })}
+                  </em>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Delivery + Payment */}
+      <div className="oc-cols">
+        {order.address && (
+          <div className="oc-box">
+            <h3>Delivery Address</h3>
+            <p className="oc-addr-name">
+              {order.address.fullName}{" "}
+              <span className="oc-addr-type">{order.address.type}</span>
+            </p>
+            <p>
+              {order.address.line1}
+              {order.address.line2 ? `, ${order.address.line2}` : ""}
+              {order.address.landmark ? `, near ${order.address.landmark}` : ""}
+              <br />
+              {order.address.city}, {order.address.state} - {order.address.pincode}
+            </p>
+            <p className="oc-addr-phone">📞 {order.address.phone}</p>
+          </div>
+        )}
+
+        <div className="oc-box">
+          <h3>Delivery Partner</h3>
+          {order.deliveryPartner?.name ? (
+            <>
+              <p className="oc-addr-name">{order.deliveryPartner.name}</p>
+              <p>Tracking ID: <strong>{order.deliveryPartner.trackingId}</strong></p>
+              <a
+                className="oc-call"
+                href={`tel:${order.deliveryPartner.phone.replace(/\s/g, "")}`}
+              >
+                📞 Call {order.deliveryPartner.phone}
+              </a>
+            </>
+          ) : (
+            <p>Being assigned…</p>
+          )}
+          <p className="oc-pay">
+            Payment:{" "}
+            <strong>
+              {order.paymentStatus === "paid"
+                ? "Paid online ✓"
+                : order.paymentStatus === "pending"
+                ? "Payment pending"
+                : order.paymentStatus === "failed"
+                ? "Payment failed"
+                : "Cash on Delivery"}
+            </strong>
+          </p>
+        </div>
       </div>
 
       {/* Invoice */}

@@ -16,4 +16,7 @@ logs/
 # VS Code settings
 .vscode/
 
+# Claude Code local config / memory
+.claude/
+
 #changes

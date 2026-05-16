@@ -1,6 +1,5 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
-import api from "../services";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "./Cart.styles.css";
@@ -23,18 +22,12 @@ export default function Cart() {
   const shipping = subtotal === 0 || subtotal >= FREE_SHIP_OVER ? 0 : SHIP_FEE;
   const total = subtotal + shipping;
 
-  async function placeOrder() {
+  function placeOrder() {
     if (!user) {
       alert("Please log in to place an order");
       return navigate("/login");
     }
-    try {
-      const res = await api.post("/api/orders", { items: cart });
-      clearCart();
-      navigate(`/order/${res.data.orderId}`);
-    } catch (err) {
-      alert("Order failed, try again");
-    }
+    navigate("/checkout");
   }
 
   if (cart.length === 0) {
