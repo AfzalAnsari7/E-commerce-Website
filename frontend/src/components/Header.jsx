@@ -67,6 +67,7 @@ export default function Header() {
   function onSearch(e) {
     e.preventDefault();
     const term = q.trim();
+    setMenuOpen(false);
     navigate(term ? `/products?q=${encodeURIComponent(term)}` : "/products");
   }
 
@@ -114,8 +115,11 @@ export default function Header() {
         <div className="ss-right">
           <form className="ss-search" onSubmit={onSearch}>
             <input
-              type="text"
+              type="search"
+              id="site-search"
+              name="q"
               aria-label="Search products"
+              autoComplete="off"
               placeholder="What are you looking for?"
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -202,6 +206,20 @@ export default function Header() {
             ✕
           </button>
         </div>
+
+        <form className="ss-drawer-search" onSubmit={onSearch}>
+          <input
+            type="search"
+            name="q"
+            aria-label="Search products"
+            placeholder="Search products…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <button type="submit" aria-label="Search">
+            <Icon type="search" />
+          </button>
+        </form>
 
         <nav className="ss-drawer-nav" onClick={() => setMenuOpen(false)}>
           <p className="ss-drawer-label">Shop</p>

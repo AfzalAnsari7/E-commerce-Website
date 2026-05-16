@@ -15,6 +15,36 @@ const SIZE_CHART = [
   { size: "XXL", chest: "44\"", length: "31\"" },
 ]
 
+// shrink a picked image to a max edge + JPEG quality so the
+// payload stays small enough to store inline with the review
+function compressImage(file, maxEdge = 1000, quality = 0.7) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error("read failed"))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error("decode failed"))
+      img.onload = () => {
+        let { width, height } = img
+        if (width > height && width > maxEdge) {
+          height = Math.round((height * maxEdge) / width)
+          width = maxEdge
+        } else if (height > maxEdge) {
+          width = Math.round((width * maxEdge) / height)
+          height = maxEdge
+        }
+        const canvas = document.createElement("canvas")
+        canvas.width = width
+        canvas.height = height
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL("image/jpeg", quality))
+      }
+      img.src = reader.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 function Stars({ value, size = 16 }) {
   const v = Math.round(value)
   return (
@@ -42,7 +72,9 @@ export default function ProductDetails() {
   const [reviewData, setReviewData] = useState({ average: 0, count: 0, reviews: [] })
   const [myRating, setMyRating] = useState(0)
   const [myComment, setMyComment] = useState("")
+  const [myImages, setMyImages] = useState([]) // compressed data URIs
   const [submitting, setSubmitting] = useState(false)
+  const [lightbox, setLightbox] = useState(null) // src of zoomed review photo
 
   function loadReviews() {
     api.get(`/api/products/${id}/reviews`)
@@ -86,14 +118,39 @@ export default function ProductDetails() {
     setTimeout(() => setAdded(false), 1800)
   }
 
+  async function onPickImages(e) {
+    const files = Array.from(e.target.files || [])
+    e.target.value = "" // allow re-picking the same file
+    if (!files.length) return
+    const room = 4 - myImages.length
+    if (room <= 0) return alert("You can attach up to 4 photos")
+    try {
+      const compressed = await Promise.all(
+        files.slice(0, room).map(f => compressImage(f))
+      )
+      setMyImages(prev => [...prev, ...compressed])
+    } catch {
+      alert("Couldn't process that image — try another file")
+    }
+  }
+
+  function removeImage(idx) {
+    setMyImages(prev => prev.filter((_, i) => i !== idx))
+  }
+
   async function submitReview(e) {
     e.preventDefault()
     if (!myRating) return alert("Please select a star rating")
     setSubmitting(true)
     try {
-      await api.post(`/api/products/${id}/reviews`, { rating: myRating, comment: myComment })
+      await api.post(`/api/products/${id}/reviews`, {
+        rating: myRating,
+        comment: myComment,
+        images: myImages,
+      })
       setMyRating(0)
       setMyComment("")
+      setMyImages([])
       loadReviews()
     } catch (err) {
       alert(err.response?.data?.message || "Failed to submit review")
@@ -102,8 +159,16 @@ export default function ProductDetails() {
     }
   }
 
+  function goBack() {
+    if (window.history.length > 2) navigate(-1)
+    else navigate("/products")
+  }
+
   return (
     <div className="pd-page">
+      <button type="button" className="pd-back" onClick={goBack}>
+        ← Back
+      </button>
       <nav className="pd-crumb">
         <Link to="/">Home</Link>
         <span>/</span>
@@ -245,6 +310,38 @@ export default function ProductDetails() {
               value={myComment}
               onChange={(e) => setMyComment(e.target.value)}
             />
+
+            <div className="pd-review-photos">
+              {myImages.map((src, i) => (
+                <div className="pd-review-thumb" key={i}>
+                  <img src={src} alt={`upload ${i + 1}`} />
+                  <button
+                    type="button"
+                    aria-label="Remove photo"
+                    onClick={() => removeImage(i)}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              {myImages.length < 4 && (
+                <label className="pd-review-addphoto">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    hidden
+                    onChange={onPickImages}
+                  />
+                  <span>＋</span>
+                  <small>Add photo</small>
+                </label>
+              )}
+            </div>
+            <p className="pd-review-photohint">
+              Add up to 4 photos to show how it really looks (optional)
+            </p>
+
             <button className="pd-review-submit" disabled={submitting}>
               {submitting ? "Submitting…" : "Submit Review"}
             </button>
@@ -269,11 +366,45 @@ export default function ProductDetails() {
                   </span>
                 </div>
                 {r.comment && <p className="pd-review-text">{r.comment}</p>}
+                {Array.isArray(r.images) && r.images.length > 0 && (
+                  <div className="pd-review-gallery">
+                    {r.images.map((src, i) => (
+                      <button
+                        type="button"
+                        className="pd-review-photo"
+                        key={i}
+                        onClick={() => setLightbox(src)}
+                        aria-label="View photo"
+                      >
+                        <img src={src} alt={`review by ${r.userName} ${i + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ))
           )}
         </div>
       </section>
+
+      {/* Review photo lightbox */}
+      {lightbox && (
+        <div
+          className="pd-lightbox"
+          onClick={() => setLightbox(null)}
+          role="dialog"
+          aria-label="Review photo"
+        >
+          <button
+            className="pd-lightbox-close"
+            onClick={() => setLightbox(null)}
+            aria-label="Close"
+          >
+            ✕
+          </button>
+          <img src={lightbox} alt="Review photo" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
 
       {/* Size guide modal */}
       {guideOpen && (

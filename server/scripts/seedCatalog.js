@@ -24,7 +24,7 @@ const CATALOG = [
   { title: "Ribbed Crop Top", price: 699, mrp: 1199, category: "Women", image: img("1564257631407-4deb1f99d992"), description: "Stretchy ribbed crop top in a flattering fit." },
   { title: "High-Waist Mom Jeans", price: 2499, mrp: 3999, category: "Women", image: img("1542272604-787c3835535d"), description: "Vintage-inspired high-waist denim with a relaxed leg." },
   { title: "Linen Blend Blouse", price: 1599, mrp: 2599, category: "Women", image: img("1485462537746-965f33f7f6a7"), description: "Airy linen-blend blouse with a soft drape." },
-  { title: "Pleated Midi Skirt", price: 1799, mrp: 2799, category: "Women", image: img("1583496661160-fb5886a13d77"), description: "Flowy pleated midi skirt that moves with you." },
+  { title: "Pleated Midi Skirt", price: 1799, mrp: 2799, category: "Women", image: img("1551163943-3f6a855d1153"), description: "Flowy pleated midi skirt that moves with you." },
   { title: "Knit Co-ord Set", price: 2899, mrp: 4499, category: "Women", image: img("1490481651871-ab68de25d43d"), description: "Matching knit top and bottoms for an easy look." },
 
   // ---------- SNEAKERS ----------

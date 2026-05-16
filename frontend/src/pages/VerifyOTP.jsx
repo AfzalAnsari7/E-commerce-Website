@@ -42,8 +42,13 @@ export default function VerifyOTP() {
         <p>An OTP was sent to <strong>{email}</strong>. Enter it below to complete registration.</p>
         <form onSubmit={submit}>
           <div className="mb-3">
-            <label className="form-label">OTP</label>
+            <label className="form-label" htmlFor="otp-code">OTP</label>
             <input
+              id="otp-code"
+              name="otp"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
               className="form-control"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}

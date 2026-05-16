@@ -21,8 +21,12 @@ export default function Login() {
         <h3>Login</h3>
         <form onSubmit={submit}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label" htmlFor="login-email">Email</label>
             <input
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="email"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -30,9 +34,12 @@ export default function Login() {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="login-password">Password</label>
             <input
+              id="login-password"
+              name="password"
               type="password"
+              autoComplete="current-password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

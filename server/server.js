@@ -77,7 +77,7 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-app.use(express.json());
+app.use(express.json({ limit: "8mb" })); // headroom for review photos
 
 // ----------------------
 // OTP SYSTEM
@@ -250,9 +250,17 @@ app.get("/api/products/:id/reviews", async (req, res) => {
 
 app.post("/api/products/:id/reviews", authMiddleware, async (req, res) => {
   try {
-    const { rating, comment } = req.body;
+    const { rating, comment, images } = req.body;
     const r = Number(rating);
     if (!r || r < 1 || r > 5) return res.status(400).json({ message: "Rating must be 1–5" });
+
+    // up to 4 image data-URIs, each ≤ ~1.5MB
+    const photos = Array.isArray(images)
+      ? images
+          .filter((s) => typeof s === "string" && s.startsWith("data:image/"))
+          .slice(0, 4)
+          .filter((s) => s.length <= 1_500_000)
+      : [];
 
     const product = await Product.findOne({ id: req.params.id });
     if (!product) return res.status(404).json({ message: "Product not found" });
@@ -263,7 +271,7 @@ app.post("/api/products/:id/reviews", authMiddleware, async (req, res) => {
     // one review per user/product — update if it exists
     const review = await Review.findOneAndUpdate(
       { productId: req.params.id, userId: req.user.id },
-      { rating: r, comment: comment || "", userName },
+      { rating: r, comment: comment || "", userName, images: photos },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
     res.json(review);

@@ -15,7 +15,16 @@ export default function ProductCard({ product }) {
   return (
     <Link to={`/products/${product.id}`} className="ss-card">
       <div className="ss-card-media">
-        <img src={product.image} alt={product.title} />
+        <img
+          src={product.image}
+          alt={product.title}
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='400'><rect width='100%25' height='100%25' fill='%23f0f0f0'/><text x='50%25' y='50%25' font-size='16' fill='%23999' text-anchor='middle' dy='.3em'>No image</text></svg>";
+          }}
+        />
         <button
           type="button"
           className={`ss-wish ${wished ? "wished" : ""}`}
