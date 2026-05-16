@@ -65,24 +65,32 @@ async function seedFromJSON() {
 // production frontend URL is supplied via the ALLOWED_ORIGINS env
 // var (comma-separated) so deploys don't need a code change.
 const allowedOrigins = [
-  'http://localhost:5173',
   ...(process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
     : ['https://smart-e-commerce.netlify.app'])
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error('CORS policy: This origin is not allowed'), false);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET','POST','PUT','DELETE'],
-  credentials: true
-}));
-app.options('*', cors());
+// Returns true if the request origin may call this API. We never
+// throw here: an unlisted origin simply gets no CORS headers, so the
+// browser blocks it cleanly instead of the server returning a 500.
+function isAllowedOrigin(origin) {
+  // Non-browser callers (curl, server-to-server) send no Origin.
+  if (!origin) return true;
+  // Any localhost port for local dev (Vite may pick 5173, 5174, ...).
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+  return allowedOrigins.includes(origin);
+}
+
+const corsOptions = {
+  origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+// Same options for preflight and actual requests so they can't disagree.
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: "8mb" })); // headroom for review photos
 
