@@ -22,6 +22,24 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [acctOpen, setAcctOpen] = useState(false);
   const acctRef = useRef(null);
+  const headerRef = useRef(null);
+
+  // expose the header's height as a CSS var so sticky bars (e.g. the
+  // product filter toolbar) can pin right below it
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const setH = () =>
+      document.documentElement.style.setProperty("--header-h", `${el.offsetHeight}px`);
+    setH();
+    const ro = new ResizeObserver(setH);
+    ro.observe(el);
+    window.addEventListener("resize", setH);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", setH);
+    };
+  }, []);
 
   // lock body scroll while the drawer is open
   useEffect(() => {
@@ -53,7 +71,7 @@ export default function Header() {
   }
 
   return (
-    <header className="ss-header">
+    <header className="ss-header" ref={headerRef}>
       {/* Offer bar */}
       <div className="ss-offerbar">
         <div className="ss-offer-track">

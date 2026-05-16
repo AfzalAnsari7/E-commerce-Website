@@ -7,13 +7,18 @@ import "./Cart.styles.css";
 
 const FREE_SHIP_OVER = 999;
 const SHIP_FEE = 49;
+const DEFAULT_SIZES = ["S", "M", "L", "XL", "XXL"];
+const FALLBACK_IMG =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='150'><rect width='100%25' height='100%25' fill='%23eee'/><text x='50%25' y='50%25' font-size='12' fill='%23999' text-anchor='middle' dy='.3em'>No image</text></svg>";
 
 export default function Cart() {
-  const { cart, updateQty, removeFromCart, clearCart } = useCart();
+  const { cart, updateQty, updateSize, removeFromCart, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const subtotal = cart.reduce((s, p) => s + p.price * p.qty, 0);
+  const bagMrp = cart.reduce((s, p) => s + (Number(p.mrp) > p.price ? p.mrp : p.price) * p.qty, 0);
+  const discount = bagMrp - subtotal;
   const itemCount = cart.reduce((s, p) => s + p.qty, 0);
   const shipping = subtotal === 0 || subtotal >= FREE_SHIP_OVER ? 0 : SHIP_FEE;
   const total = subtotal + shipping;
@@ -25,8 +30,8 @@ export default function Cart() {
     }
     try {
       const res = await api.post("/api/orders", { items: cart });
-      alert("Order placed — id: " + res.data.orderId);
       clearCart();
+      navigate(`/order/${res.data.orderId}`);
     } catch (err) {
       alert("Order failed, try again");
     }
@@ -59,75 +64,123 @@ export default function Cart() {
       <div className="cart-grid">
         {/* Items */}
         <div className="cart-items">
-          {cart.map((p) => (
-            <div className="cart-item" key={p.id}>
-              <Link to={`/products/${p.id}`} className="cart-thumb">
-                <img src={p.image} alt={p.title} />
-              </Link>
-
-              <div className="cart-info">
-                <Link to={`/products/${p.id}`} className="cart-name">
-                  {p.title}
+          {cart.map((p) => {
+            const lineMrp = (Number(p.mrp) > p.price ? p.mrp : p.price) * p.qty;
+            const lineNow = p.price * p.qty;
+            return (
+              <div className="cart-item" key={`${p.id}-${p.size || ""}`}>
+                <Link to={`/products/${p.id}`} className="cart-thumb">
+                  <img
+                    src={p.image}
+                    alt=""
+                    onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
+                  />
                 </Link>
-                <p className="cart-unit">₹{p.price}</p>
 
-                <div className="cart-controls">
-                  <div className="qty-stepper">
-                    <button
-                      onClick={() => updateQty(p.id, Math.max(1, p.qty - 1))}
-                      aria-label="Decrease quantity"
-                    >−</button>
-                    <span>{p.qty}</span>
-                    <button
-                      onClick={() => updateQty(p.id, p.qty + 1)}
-                      aria-label="Increase quantity"
-                    >+</button>
+                <div className="cart-info">
+                  <Link to={`/products/${p.id}`} className="cart-name">
+                    {p.title}
+                  </Link>
+
+                  <div className="cart-meta">
+                    <label className="cart-size">
+                      Size:
+                      <select
+                        value={p.size || ""}
+                        onChange={(e) => updateSize(p.id, e.target.value)}
+                      >
+                        {(Array.isArray(p.sizes) && p.sizes.length
+                          ? p.sizes
+                          : DEFAULT_SIZES
+                        ).map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </label>
+                    {p.category && <span>Category: <strong>{p.category}</strong></span>}
+                    <span>Qty: <strong>{p.qty}</strong></span>
                   </div>
 
-                  <button
-                    className="cart-remove"
-                    onClick={() => removeFromCart(p.id)}
-                  >
-                    Remove
-                  </button>
+                  <div className="cart-unit">
+                    <span className="cart-now">₹{p.price}</span>
+                    {Number(p.mrp) > p.price && (
+                      <>
+                        <span className="cart-was">₹{p.mrp}</span>
+                        <span className="cart-save">
+                          {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% off
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="cart-controls">
+                    <div className="qty-stepper">
+                      <button
+                        onClick={() => updateQty(p.id, Math.max(1, p.qty - 1))}
+                        aria-label="Decrease quantity"
+                      >−</button>
+                      <span>{p.qty}</span>
+                      <button
+                        onClick={() => updateQty(p.id, p.qty + 1)}
+                        aria-label="Increase quantity"
+                      >+</button>
+                    </div>
+                    <button
+                      className="cart-remove"
+                      onClick={() => removeFromCart(p.id)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+
+                <div className="cart-line-total">
+                  ₹{lineNow}
+                  {lineMrp > lineNow && <small>₹{lineMrp}</small>}
                 </div>
               </div>
-
-              <div className="cart-line-total">₹{p.price * p.qty}</div>
-            </div>
-          ))}
+            );
+          })}
 
           <button className="cart-clear" onClick={clearCart}>
             Clear entire bag
           </button>
         </div>
 
-        {/* Summary */}
+        {/* Price details (invoice style) */}
         <aside className="cart-summary">
-          <h3>Order Summary</h3>
+          <h3>Price Details</h3>
 
           <div className="sum-row">
-            <span>Subtotal ({itemCount} items)</span>
-            <span>₹{subtotal}</span>
+            <span>Bag total ({itemCount} item{itemCount > 1 ? "s" : ""})</span>
+            <span>₹{bagMrp}</span>
           </div>
+          {discount > 0 && (
+            <div className="sum-row">
+              <span>Discount</span>
+              <span className="sum-green">− ₹{discount}</span>
+            </div>
+          )}
           <div className="sum-row">
-            <span>Shipping</span>
+            <span>Delivery</span>
             <span>
-              {shipping === 0
-                ? <em className="free">FREE</em>
-                : `₹${shipping}`}
+              {shipping === 0 ? <em className="free">FREE</em> : `₹${shipping}`}
             </span>
           </div>
           {shipping > 0 && (
             <p className="sum-hint">
-              Add ₹{FREE_SHIP_OVER - subtotal} more for free shipping
+              Add ₹{FREE_SHIP_OVER - subtotal} more for free delivery
             </p>
           )}
 
           <div className="sum-row sum-total">
-            <span>Total</span>
+            <span>Total Amount</span>
             <span>₹{total}</span>
           </div>
+
+          {discount > 0 && (
+            <p className="sum-saved">You will save ₹{discount} on this order</p>
+          )}
 
           <button className="cart-checkout" onClick={placeOrder}>
             Place Order

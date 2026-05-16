@@ -1,0 +1,94 @@
+/* ---- Admin size checkboxes ---- */
+.ad-sizes {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ad-sizes > span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.ad-sizes label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ad-sizes label.on {
+  background: var(--dark);
+  color: #fff;
+  border-color: var(--dark);
+}
+.ad-sizes input { accent-color: var(--accent); }
+
+/* ---- Edit modal ---- */
+.ad-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1300;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.ad-modal {
+  background: #fff;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 520px;
+  font-family: 'Montserrat', sans-serif;
+}
+.ad-modal-head,
+.ad-modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.ad-modal-foot {
+  border-bottom: none;
+  border-top: 1px solid var(--border);
+  gap: 12px;
+}
+.ad-modal-head h5 { margin: 0; font-weight: 800; }
+.ad-modal-head button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.ad-modal-body { padding: 20px 22px; }
+.ad-modal-body label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 14px 0 6px;
+}
+.ad-modal-body .ad-sizes label { margin: 0; }
+.ad-preview {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.ad-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 16px 0 0;
+  font-style: italic;
+}

@@ -9,8 +9,10 @@ import Register from './pages/Register'
 import VerifyOTP from './pages/VerifyOTP'
 import Admin from './pages/Admin'
 import Wishlist from './pages/Wishlist'
+import OrderConfirmation from './pages/OrderConfirmation'
 import InfoPage from './pages/InfoPage'
 import Header from './components/Header'
+import Footer from './components/Footer'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
 
@@ -34,6 +36,7 @@ export default function App() {
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/order/:id" element={<OrderConfirmation />} />
             <Route path="/page/:slug" element={<InfoPage />} />
             <Route path="/verify-otp" element={<Contained><VerifyOTP /></Contained>} />
             <Route path="/login" element={<Contained><Login /></Contained>} />
@@ -41,6 +44,7 @@ export default function App() {
             <Route path="/admin" element={<Contained><Admin /></Contained>} />
           </Routes>
         </main>
+        <Footer />
       </WishlistProvider>
     </CartProvider>
   )

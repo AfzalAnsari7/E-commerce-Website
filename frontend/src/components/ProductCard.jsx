@@ -4,9 +4,10 @@ import { useWishlist } from '../context/WishlistContext'
 import "./ProductCard.css";
 
 export default function ProductCard({ product }) {
-  // Backend has no MRP/discount, so derive a believable "was" price.
-  const mrp = Math.round(product.price * 1.7);
-  const off = Math.round(((mrp - product.price) / mrp) * 100);
+  // Real MRP from product data; only show a discount if it's set above price.
+  const mrp = Number(product.mrp) || 0;
+  const hasDiscount = mrp > product.price;
+  const off = hasDiscount ? Math.round(((mrp - product.price) / mrp) * 100) : 0;
 
   const { isWished, toggleWishlist } = useWishlist();
   const wished = isWished(product.id);
@@ -33,7 +34,7 @@ export default function ProductCard({ product }) {
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
           </svg>
         </button>
-        <span className="ss-tag">{off}% OFF</span>
+        {hasDiscount && <span className="ss-tag">{off}% OFF</span>}
       </div>
 
       <div className="ss-card-body">
@@ -41,8 +42,8 @@ export default function ProductCard({ product }) {
         <h3 className="ss-name">{product.title}</h3>
         <div className="ss-price-row">
           <span className="ss-price">₹{product.price}</span>
-          <span className="ss-mrp">₹{mrp}</span>
-          <span className="ss-off">({off}% OFF)</span>
+          {hasDiscount && <span className="ss-mrp">₹{mrp}</span>}
+          {hasDiscount && <span className="ss-off">({off}% OFF)</span>}
         </div>
       </div>
     </Link>

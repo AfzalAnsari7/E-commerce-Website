@@ -3,42 +3,103 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import api from '../services'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
-import demoProducts from '../data/product'
+import { useAuth } from '../context/AuthContext'
 import "./ProductDetails.styles.css"
 
 const SIZES = ["S", "M", "L", "XL", "XXL"]
+const SIZE_CHART = [
+  { size: "S", chest: "36\"", length: "27\"" },
+  { size: "M", chest: "38\"", length: "28\"" },
+  { size: "L", chest: "40\"", length: "29\"" },
+  { size: "XL", chest: "42\"", length: "30\"" },
+  { size: "XXL", chest: "44\"", length: "31\"" },
+]
+
+function Stars({ value, size = 16 }) {
+  const v = Math.round(value)
+  return (
+    <span className="pd-stars" style={{ fontSize: size }}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <span key={n} className={n <= v ? "" : "pd-star-dim"}>★</span>
+      ))}
+    </span>
+  )
+}
 
 export default function ProductDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [product, setProduct] = useState(null)
-  const [size, setSize] = useState("M")
-  const [added, setAdded] = useState(false)
   const { addToCart } = useCart()
   const { isWished, toggleWishlist } = useWishlist()
+  const { user } = useAuth()
+
+  const [product, setProduct] = useState(null)
+  const [status, setStatus] = useState("loading") // loading | ok | error
+  const [size, setSize] = useState("M")
+  const [added, setAdded] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
+
+  const [reviewData, setReviewData] = useState({ average: 0, count: 0, reviews: [] })
+  const [myRating, setMyRating] = useState(0)
+  const [myComment, setMyComment] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+
+  function loadReviews() {
+    api.get(`/api/products/${id}/reviews`)
+      .then(res => setReviewData(res.data))
+      .catch(() => setReviewData({ average: 0, count: 0, reviews: [] }))
+  }
 
   useEffect(() => {
     setProduct(null)
+    setStatus("loading")
     api.get(`/api/products/${id}`)
-      .then(res => setProduct(res.data))
-      .catch(() => {
-        const fallback = demoProducts.find(p => String(p.id) === String(id))
-        setProduct(fallback || null)
-      })
+      .then(res => { setProduct(res.data); setStatus("ok") })
+      .catch(() => setStatus("error"))
+    loadReviews()
   }, [id])
 
-  if (!product) {
-    return <div className="pd-loading">Loading product…</div>
+  if (status === "loading") return <div className="pd-loading">Loading product…</div>
+
+  if (status === "error" || !product) {
+    return (
+      <div className="pd-notfound">
+        <h2>Product not available</h2>
+        <p>This product may have been removed or is temporarily unavailable.</p>
+        <Link to="/products" className="pd-notfound-btn">Browse all products</Link>
+      </div>
+    )
   }
 
-  const mrp = Math.round(product.price * 1.7)
-  const off = Math.round(((mrp - product.price) / mrp) * 100)
+  const mrp = Number(product.mrp) || 0
+  const hasDiscount = mrp > product.price
+  const off = hasDiscount ? Math.round(((mrp - product.price) / mrp) * 100) : 0
   const wished = isWished(product.id)
+  const { average, count, reviews } = reviewData
+  const availableSizes =
+    Array.isArray(product.sizes) && product.sizes.length ? product.sizes : SIZES
+  const activeSize = availableSizes.includes(size) ? size : availableSizes[0]
 
   function addToBag() {
-    addToCart({ ...product, size }, 1)
+    addToCart({ ...product, size: activeSize }, 1)
     setAdded(true)
     setTimeout(() => setAdded(false), 1800)
+  }
+
+  async function submitReview(e) {
+    e.preventDefault()
+    if (!myRating) return alert("Please select a star rating")
+    setSubmitting(true)
+    try {
+      await api.post(`/api/products/${id}/reviews`, { rating: myRating, comment: myComment })
+      setMyRating(0)
+      setMyComment("")
+      loadReviews()
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to submit review")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -54,41 +115,53 @@ export default function ProductDetails() {
       </nav>
 
       <div className="pd-grid">
-        {/* Gallery */}
         <div className="pd-gallery">
           <div className="pd-main-img">
             <img src={product.image} alt={product.title} />
-            {off > 0 && <span className="pd-off-tag">{off}% OFF</span>}
+            {hasDiscount && <span className="pd-off-tag">{off}% OFF</span>}
           </div>
         </div>
 
-        {/* Info */}
         <div className="pd-info">
           <p className="pd-brand">AXEN WEAR</p>
           <h1 className="pd-title">{product.title}</h1>
 
           <div className="pd-rating">
-            <span className="pd-stars">★★★★<span className="pd-star-dim">★</span></span>
-            <span className="pd-rating-count">4.2 · 128 ratings</span>
+            {count > 0 ? (
+              <>
+                <Stars value={average} />
+                <span className="pd-rating-count">
+                  {average} · {count} rating{count !== 1 ? "s" : ""}
+                </span>
+              </>
+            ) : (
+              <span className="pd-rating-count">No ratings yet</span>
+            )}
           </div>
 
           <div className="pd-price-row">
             <span className="pd-price">₹{product.price}</span>
-            <span className="pd-mrp">₹{mrp}</span>
-            <span className="pd-off">({off}% OFF)</span>
+            {hasDiscount && <span className="pd-mrp">₹{mrp}</span>}
+            {hasDiscount && <span className="pd-off">({off}% OFF)</span>}
           </div>
           <p className="pd-tax">inclusive of all taxes</p>
 
           <div className="pd-sizes">
             <div className="pd-sizes-head">
               <span>Select Size</span>
-              <span className="pd-size-guide">Size Guide</span>
+              <button
+                type="button"
+                className="pd-size-guide"
+                onClick={() => setGuideOpen(true)}
+              >
+                Size Guide
+              </button>
             </div>
             <div className="pd-size-list">
-              {SIZES.map(s => (
+              {availableSizes.map(s => (
                 <button
                   key={s}
-                  className={`pd-size ${size === s ? "active" : ""}`}
+                  className={`pd-size ${activeSize === s ? "active" : ""}`}
                   onClick={() => setSize(s)}
                 >
                   {s}
@@ -133,6 +206,93 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      {/* Reviews */}
+      <section className="pd-reviews">
+        <h2>
+          Ratings &amp; Reviews
+          {count > 0 && (
+            <span className="pd-reviews-avg">
+              <Stars value={average} /> {average} / 5 · {count} review{count !== 1 ? "s" : ""}
+            </span>
+          )}
+        </h2>
+
+        {user ? (
+          <form className="pd-review-form" onSubmit={submitReview}>
+            <p className="pd-review-form-title">Write a review</p>
+            <div className="pd-star-input">
+              {[1, 2, 3, 4, 5].map(n => (
+                <button
+                  type="button"
+                  key={n}
+                  className={n <= myRating ? "on" : ""}
+                  onClick={() => setMyRating(n)}
+                  aria-label={`${n} star`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <textarea
+              placeholder="Share your experience (optional)"
+              value={myComment}
+              onChange={(e) => setMyComment(e.target.value)}
+            />
+            <button className="pd-review-submit" disabled={submitting}>
+              {submitting ? "Submitting…" : "Submit Review"}
+            </button>
+          </form>
+        ) : (
+          <p className="pd-review-login">
+            <Link to="/login">Log in</Link> to rate this product.
+          </p>
+        )}
+
+        <div className="pd-review-list">
+          {reviews.length === 0 ? (
+            <p className="pd-review-empty">No reviews yet — be the first!</p>
+          ) : (
+            reviews.map(r => (
+              <div className="pd-review" key={r.id}>
+                <div className="pd-review-head">
+                  <strong>{r.userName}</strong>
+                  <Stars value={r.rating} size={14} />
+                  <span className="pd-review-date">
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                {r.comment && <p className="pd-review-text">{r.comment}</p>}
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+      {/* Size guide modal */}
+      {guideOpen && (
+        <div className="pd-modal-overlay" onClick={() => setGuideOpen(false)}>
+          <div className="pd-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="pd-modal-head">
+              <h3>Size Guide</h3>
+              <button onClick={() => setGuideOpen(false)} aria-label="Close">✕</button>
+            </div>
+            <p className="pd-modal-sub">Measurements in inches. Fit may vary by style.</p>
+            <table className="pd-size-table">
+              <thead>
+                <tr><th>Size</th><th>Chest</th><th>Length</th></tr>
+              </thead>
+              <tbody>
+                {SIZE_CHART.map(row => (
+                  <tr key={row.size}>
+                    <td>{row.size}</td><td>{row.chest}</td><td>{row.length}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -12,6 +12,7 @@ const mongoose = require("mongoose");
 const Product = require("./models/Product");
 const User = require("./models/User");
 const Order = require("./models/Order");
+const Review = require("./models/Review");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -232,6 +233,47 @@ app.get("/api/products/:id", async (req, res) => {
 });
 
 // ----------------------
+// REVIEWS / RATINGS
+// ----------------------
+app.get("/api/products/:id/reviews", async (req, res) => {
+  try {
+    const reviews = await Review.find({ productId: req.params.id }).sort({ createdAt: -1 });
+    const count = reviews.length;
+    const average = count
+      ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / count) * 10) / 10
+      : 0;
+    res.json({ average, count, reviews });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load reviews" });
+  }
+});
+
+app.post("/api/products/:id/reviews", authMiddleware, async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const r = Number(rating);
+    if (!r || r < 1 || r > 5) return res.status(400).json({ message: "Rating must be 1–5" });
+
+    const product = await Product.findOne({ id: req.params.id });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const dbUser = await User.findOne({ id: req.user.id });
+    const userName = dbUser ? dbUser.name : "Customer";
+
+    // one review per user/product — update if it exists
+    const review = await Review.findOneAndUpdate(
+      { productId: req.params.id, userId: req.user.id },
+      { rating: r, comment: comment || "", userName },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    res.json(review);
+  } catch (err) {
+    console.error("review failed:", err.message);
+    res.status(500).json({ message: "Failed to submit review" });
+  }
+});
+
+// ----------------------
 // Auth middleware
 // ----------------------
 function authMiddleware(req, res, next) {
@@ -249,13 +291,15 @@ function authMiddleware(req, res, next) {
 app.post("/api/admin/products", authMiddleware, async (req, res) => {
   try {
     if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
-    const { title, price, image, description, category } = req.body;
+    const { title, price, mrp, image, description, category, sizes } = req.body;
     if (!title || !price) return res.status(400).json({ message: "Missing fields" });
 
     const newProduct = await Product.create({
       title,
       price,
+      mrp: Number(mrp) || 0,
       category: category || "Men",
+      ...(Array.isArray(sizes) && sizes.length ? { sizes } : {}),
       image: image || "https://picsum.photos/600/400",
       description: description || "",
     });
@@ -263,6 +307,60 @@ app.post("/api/admin/products", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("add product failed:", err.message);
     res.status(500).json({ message: "Failed to add product" });
+  }
+});
+
+// Admin: update a product (all fields editable)
+app.put("/api/admin/products/:id", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
+    const { title, price, mrp, category, image, description, sizes } = req.body;
+    const update = {};
+    if (title !== undefined) update.title = title;
+    if (price !== undefined) update.price = Number(price);
+    if (mrp !== undefined) update.mrp = Number(mrp) || 0;
+    if (category !== undefined) update.category = category;
+    if (image !== undefined) update.image = image;
+    if (description !== undefined) update.description = description;
+    if (Array.isArray(sizes)) update.sizes = sizes;
+
+    const product = await Product.findOneAndUpdate(
+      { id: req.params.id },
+      { $set: update },
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ message: "Not found" });
+    res.json(product);
+  } catch (err) {
+    console.error("update product failed:", err.message);
+    res.status(500).json({ message: "Failed to update product" });
+  }
+});
+
+// Admin: delete a single product
+app.delete("/api/admin/products/:id", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
+    const r = await Product.deleteOne({ id: req.params.id });
+    if (r.deletedCount === 0) return res.status(404).json({ message: "Not found" });
+    res.json({ message: "deleted", id: req.params.id });
+  } catch (err) {
+    console.error("delete product failed:", err.message);
+    res.status(500).json({ message: "Failed to delete product" });
+  }
+});
+
+// Admin: bulk delete every product in a category
+app.delete("/api/admin/products", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
+    const { category } = req.query;
+    if (!category) return res.status(400).json({ message: "category is required" });
+    const r = await Product.deleteMany({ category });
+    res.json({ message: "deleted", count: r.deletedCount, category });
+  } catch (err) {
+    console.error("bulk delete failed:", err.message);
+    res.status(500).json({ message: "Failed to delete products" });
   }
 });
 
@@ -277,6 +375,19 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("order failed:", err.message);
     res.status(500).json({ message: "Failed to place order" });
+  }
+});
+
+// Fetch one order (for the invoice / confirmation page)
+app.get("/api/orders/:id", authMiddleware, async (req, res) => {
+  try {
+    const order = await Order.findOne({ id: req.params.id });
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.userId !== req.user.id && !req.user.isAdmin)
+      return res.status(403).json({ message: "Forbidden" });
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load order" });
   }
 });
 

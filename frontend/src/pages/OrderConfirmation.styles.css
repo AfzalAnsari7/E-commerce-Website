@@ -1,0 +1,180 @@
+/* ============================================================
+   Order Confirmation / Invoice
+   ============================================================ */
+.oc-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  font-family: 'Montserrat', sans-serif;
+}
+.oc-msg {
+  text-align: center;
+  padding: 100px 20px;
+  color: var(--text-muted);
+}
+
+/* Success banner */
+.oc-success {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.oc-check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--success);
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+.oc-success h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 800;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+.oc-success p { color: var(--text-muted); margin: 0; }
+
+/* Invoice */
+.oc-invoice {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.oc-invoice-head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.oc-invoice-head h2 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.oc-brand { font-weight: 800; letter-spacing: 0.06em; color: var(--text-muted); }
+.oc-meta p {
+  margin: 0 0 4px;
+  font-size: 0.82rem;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.oc-meta span { color: var(--text-muted); }
+.oc-status { text-transform: capitalize; color: var(--success); }
+
+/* Items table */
+.oc-table { padding: 8px 24px; }
+.oc-trow {
+  display: grid;
+  grid-template-columns: 2.6fr 0.8fr 0.6fr 1fr 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.oc-thead {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.oc-trow:last-child { border-bottom: none; }
+.oc-prod { display: flex; align-items: center; gap: 12px; }
+.oc-prod img {
+  width: 52px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.oc-prod strong { display: block; font-size: 0.9rem; }
+.oc-prod em { font-style: normal; font-size: 0.76rem; color: var(--text-muted); }
+
+/* Totals */
+.oc-totals {
+  padding: 18px 24px 24px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+}
+.oc-trow2 {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+.oc-trow2 span:first-child { color: var(--text-muted); }
+.oc-green { color: var(--success); font-weight: 700; }
+.oc-free { color: var(--success); font-style: normal; font-weight: 800; }
+.oc-grand {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 4px;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+.oc-grand span:first-child { color: var(--text); }
+.oc-saved {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  color: var(--success);
+  font-weight: 700;
+}
+
+/* Actions */
+.oc-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+.oc-btn {
+  background: var(--dark);
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+}
+.oc-btn:hover { background: #000; }
+.oc-btn-light {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.oc-btn-light:hover { background: var(--surface-2); }
+
+@media (max-width: 620px) {
+  .oc-trow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .oc-thead { display: none; }
+  .oc-trow span[data-l]::before {
+    content: attr(data-l) ": ";
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+  .oc-prod { margin-bottom: 6px; }
+}
+
+@media print {
+  .ss-header, .ss-footer, .oc-actions, .oc-success { display: none !important; }
+  .oc-page { padding: 0; }
+}
