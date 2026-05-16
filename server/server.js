@@ -475,6 +475,7 @@ app.get("/api/products", async (req, res) => {
     const products = await Product.find(filter).sort({ createdAt: 1 });
     res.json(products);
   } catch (err) {
+    console.error("load products failed:", err.message);
     res.status(500).json({ message: "Failed to load products" });
   }
 });
@@ -485,6 +486,7 @@ app.get("/api/products/:id", async (req, res) => {
     if (!p) return res.status(404).json({ message: "Not found" });
     res.json(p);
   } catch (err) {
+    console.error("load product failed:", err.message);
     res.status(500).json({ message: "Failed to load product" });
   }
 });
@@ -501,6 +503,7 @@ app.get("/api/products/:id/reviews", async (req, res) => {
       : 0;
     res.json({ average, count, reviews });
   } catch (err) {
+    console.error("load reviews failed:", err.message);
     res.status(500).json({ message: "Failed to load reviews" });
   }
 });
@@ -659,7 +662,8 @@ app.get("/api/addresses", authMiddleware, async (req, res) => {
     const u = await User.findOne({ id: req.user.id });
     if (!u) return res.status(404).json({ message: "User not found" });
     res.json(u.addresses || []);
-  } catch {
+  } catch (err) {
+    console.error("load addresses failed:", err.message);
     res.status(500).json({ message: "Failed to load addresses" });
   }
 });
@@ -911,7 +915,8 @@ app.get("/api/orders", authMiddleware, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 });
     res.json(orders.map(withTracking));
-  } catch {
+  } catch (err) {
+    console.error("load orders failed:", err.message);
     res.status(500).json({ message: "Failed to load orders" });
   }
 });
@@ -925,6 +930,7 @@ app.get("/api/orders/:id", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "Forbidden" });
     res.json(withTracking(order));
   } catch (err) {
+    console.error("load order failed:", err.message);
     res.status(500).json({ message: "Failed to load order" });
   }
 });
