@@ -208,11 +208,18 @@ function authMiddleware(req, res, next) {
 // Admin product route
 app.post("/api/admin/products", authMiddleware, (req, res) => {
   if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
-  const { title, price, image, description } = req.body;
+  const { title, price, image, description, category } = req.body;
   if (!title || !price) return res.status(400).json({ message: "Missing fields" });
 
   const products = readJSON(productsFile);
-  const newProduct = { id: nanoid(8), title, price, image: image || "https://picsum.photos/600/400", description: description || "" };
+  const newProduct = {
+    id: nanoid(8),
+    title,
+    price,
+    category: category || "Men",
+    image: image || "https://picsum.photos/600/400",
+    description: description || "",
+  };
   products.push(newProduct);
   writeJSON(productsFile, products);
   res.json(newProduct);

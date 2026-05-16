@@ -10,6 +10,7 @@ export default function Admin() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
+  const [category, setCategory] = useState("Men");
   const [description, setDescription] = useState("");
   useEffect(() => {
     api
@@ -24,12 +25,14 @@ export default function Admin() {
         title,
         price: Number(price),
         image,
+        category,
         description,
       });
       alert("Product added: " + res.data.id);
       setTitle("");
       setPrice("");
       setImage("");
+      setCategory("Men");
       setDescription("");
       setProducts((prev) => [...prev, res.data]);
     } catch (err) {
@@ -67,7 +70,18 @@ export default function Admin() {
                 required
               />
             </div>
-            <div className="col-md-4">
+            <div className="col-md-2">
+              <select
+                className="form-control"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option>Men</option>
+                <option>Women</option>
+                <option>Sneakers</option>
+              </select>
+            </div>
+            <div className="col-md-3">
               <input
                 className="form-control"
                 placeholder="Image URL"
@@ -76,7 +90,7 @@ export default function Admin() {
                 required
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-md-2">
               <button className="btn btn-primary w-100">Add</button>
             </div>
           </div>

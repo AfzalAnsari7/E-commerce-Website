@@ -45,6 +45,7 @@
   transition: color 0.2s ease, transform 0.2s ease;
 }
 .ss-wish:hover { color: var(--sale); transform: scale(1.1); }
+.ss-wish.wished { color: var(--sale); }
 
 .ss-tag {
   position: absolute;

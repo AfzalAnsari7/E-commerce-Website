@@ -190,8 +190,10 @@
 /* ---- Category tiles ---- */
 .ss-cat-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 .ss-cat-tile {
   text-decoration: none;

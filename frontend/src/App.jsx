@@ -8,8 +8,11 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import VerifyOTP from './pages/VerifyOTP'
 import Admin from './pages/Admin'
+import Wishlist from './pages/Wishlist'
+import InfoPage from './pages/InfoPage'
 import Header from './components/Header'
 import { CartProvider } from './context/CartContext'
+import { WishlistProvider } from './context/WishlistContext'
 
 /* Bootstrap-grid pages (Login/Register/OTP/Admin) need a .container
    parent so their .row negative margins don't overflow. Home,
@@ -22,19 +25,23 @@ function Contained({ children }) {
 export default function App() {
   return (
     <CartProvider>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/verify-otp" element={<Contained><VerifyOTP /></Contained>} />
-          <Route path="/login" element={<Contained><Login /></Contained>} />
-          <Route path="/register" element={<Contained><Register /></Contained>} />
-          <Route path="/admin" element={<Contained><Admin /></Contained>} />
-        </Routes>
-      </main>
+      <WishlistProvider>
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/products/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/page/:slug" element={<InfoPage />} />
+            <Route path="/verify-otp" element={<Contained><VerifyOTP /></Contained>} />
+            <Route path="/login" element={<Contained><Login /></Contained>} />
+            <Route path="/register" element={<Contained><Register /></Contained>} />
+            <Route path="/admin" element={<Contained><Admin /></Contained>} />
+          </Routes>
+        </main>
+      </WishlistProvider>
     </CartProvider>
   )
 }

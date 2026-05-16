@@ -32,11 +32,9 @@ const SLIDES = [
 ];
 
 const CATEGORIES = [
-  { name: "Oversized T-Shirts", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600" },
-  { name: "Hoodies", img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600" },
-  { name: "Joggers", img: "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=600" },
-  { name: "Shirts", img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600" },
-  { name: "Accessories", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600" },
+  { name: "Men", img: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600" },
+  { name: "Women", img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600" },
+  { name: "Sneakers", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" },
 ];
 
 export default function Home() {
@@ -142,7 +140,11 @@ export default function Home() {
         <h2 className="ss-section-title">Shop By Category</h2>
         <div className="ss-cat-grid">
           {CATEGORIES.map((c) => (
-            <Link to="/products" className="ss-cat-tile" key={c.name}>
+            <Link
+              to={`/products?category=${c.name}`}
+              className="ss-cat-tile"
+              key={c.name}
+            >
               <div className="ss-cat-img" style={{ backgroundImage: `url(${c.img})` }} />
               <span>{c.name}</span>
             </Link>
@@ -196,15 +198,24 @@ export default function Home() {
           </div>
           <div>
             <h5>Shop</h5>
-            <a href="#">Men</a><a href="#">Women</a><a href="#">New Arrivals</a><a href="#">Sale</a>
+            <Link to="/products?category=Men">Men</Link>
+            <Link to="/products?category=Women">Women</Link>
+            <Link to="/products?category=Sneakers">Sneakers</Link>
+            <Link to="/products">All Products</Link>
           </div>
           <div>
             <h5>Help</h5>
-            <a href="#">Track Order</a><a href="#">Returns</a><a href="#">Shipping</a><a href="#">Contact</a>
+            <Link to="/page/contact">Contact Us</Link>
+            <Link to="/page/shipping">Shipping</Link>
+            <Link to="/page/returns">Returns &amp; Exchanges</Link>
+            <Link to="/cart">My Bag</Link>
           </div>
           <div>
             <h5>Company</h5>
-            <a href="#">About</a><a href="#">Careers</a><a href="#">Terms</a><a href="#">Privacy</a>
+            <Link to="/page/about">About</Link>
+            <Link to="/page/careers">Careers</Link>
+            <Link to="/page/terms">Terms</Link>
+            <Link to="/page/privacy">Privacy</Link>
           </div>
         </div>
         <p className="ss-footer-copy">

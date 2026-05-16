@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import "./Header.css";
 
@@ -14,6 +15,7 @@ const CATEGORIES = ["Men", "Women", "Sneakers"];
 export default function Header() {
   const { cart } = useCart();
   const totalItems = cart.reduce((s, p) => s + p.qty, 0);
+  const { wishlist } = useWishlist();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
@@ -27,7 +29,8 @@ export default function Header() {
 
   function onSearch(e) {
     e.preventDefault();
-    navigate("/products");
+    const term = q.trim();
+    navigate(term ? `/products?q=${encodeURIComponent(term)}` : "/products");
   }
 
   return (
@@ -54,7 +57,11 @@ export default function Header() {
           </button>
           <nav className="ss-nav">
             {CATEGORIES.map((c) => (
-              <NavLink key={c} to="/products" className="ss-nav-link">
+              <NavLink
+                key={c}
+                to={`/products?category=${c}`}
+                className="ss-nav-link"
+              >
                 {c}
               </NavLink>
             ))}
@@ -99,9 +106,12 @@ export default function Header() {
               </Link>
             )}
 
-            <Link to="/products" className="ss-action ss-hide-sm">
+            <Link to="/wishlist" className="ss-action ss-hide-sm">
               <Icon type="heart" />
               <span className="ss-action-label">Wishlist</span>
+              {wishlist.length > 0 && (
+                <span className="ss-cart-badge">{wishlist.length}</span>
+              )}
             </Link>
 
             <Link to="/cart" className="ss-action ss-cart">
@@ -133,9 +143,18 @@ export default function Header() {
         <nav className="ss-drawer-nav" onClick={() => setMenuOpen(false)}>
           <p className="ss-drawer-label">Shop</p>
           {CATEGORIES.map((c) => (
-            <Link key={c} to="/products" className="ss-drawer-link">{c}</Link>
+            <Link
+              key={c}
+              to={`/products?category=${c}`}
+              className="ss-drawer-link"
+            >
+              {c}
+            </Link>
           ))}
           <Link to="/products" className="ss-drawer-link">All Products</Link>
+          <Link to="/wishlist" className="ss-drawer-link">
+            My Wishlist ({wishlist.length})
+          </Link>
 
           <p className="ss-drawer-label">Account</p>
           {user ? (
