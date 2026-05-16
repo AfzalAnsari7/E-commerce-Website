@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import api from "../services"; // axios instance
+import PasswordInput from "../components/PasswordInput";
 
 // Single page, two steps:
 //   1. "request" — enter email, get a reset code by email
@@ -104,12 +105,10 @@ export default function ForgotPassword() {
               </div>
               <div className="mb-3">
                 <label className="form-label" htmlFor="fp-pass">New password</label>
-                <input
+                <PasswordInput
                   id="fp-pass"
                   name="password"
-                  type="password"
                   autoComplete="new-password"
-                  className="form-control"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -118,12 +117,10 @@ export default function ForgotPassword() {
               </div>
               <div className="mb-3">
                 <label className="form-label" htmlFor="fp-confirm">Confirm new password</label>
-                <input
+                <PasswordInput
                   id="fp-confirm"
                   name="confirm"
-                  type="password"
                   autoComplete="new-password"
-                  className="form-control"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   required

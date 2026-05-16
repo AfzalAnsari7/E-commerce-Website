@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import PasswordInput from "../components/PasswordInput";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,12 +36,10 @@ export default function Login() {
           </div>
           <div className="mb-3">
             <label className="form-label" htmlFor="login-password">Password</label>
-            <input
+            <PasswordInput
               id="login-password"
               name="password"
-              type="password"
               autoComplete="current-password"
-              className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
