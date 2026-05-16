@@ -31,8 +31,11 @@ export default function Register() {
         <h3>Register</h3>
         <form onSubmit={submit}>
           <div className="mb-3">
-            <label className="form-label">Full name</label>
+            <label className="form-label" htmlFor="reg-name">Full name</label>
             <input
+              id="reg-name"
+              name="name"
+              autoComplete="name"
               className="form-control"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -40,8 +43,12 @@ export default function Register() {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label" htmlFor="reg-email">Email</label>
             <input
+              id="reg-email"
+              name="email"
+              type="email"
+              autoComplete="email"
               className="form-control"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -49,9 +56,12 @@ export default function Register() {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="reg-password">Password</label>
             <input
+              id="reg-password"
+              name="password"
               type="password"
+              autoComplete="new-password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

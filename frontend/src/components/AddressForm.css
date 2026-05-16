@@ -1,0 +1,89 @@
+.af { display: flex; flex-direction: column; gap: 16px; }
+.af-err {
+  background: #fff0f0;
+  border: 1px solid #f3c2c2;
+  color: var(--sale);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+}
+.af-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.af-field { display: flex; flex-direction: column; gap: 6px; }
+.af-field label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.af-field input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.af-field input:focus {
+  outline: none;
+  border-color: var(--text);
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.06);
+}
+.af-hint { font-size: 0.74rem; color: var(--text-muted); }
+
+.af-types { display: flex; gap: 10px; }
+.af-type {
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: 0.18s ease;
+}
+.af-type.on {
+  background: var(--text);
+  color: #fff;
+  border-color: var(--text);
+}
+
+.af-actions { display: flex; gap: 12px; margin-top: 4px; }
+.af-save {
+  background: var(--text);
+  color: #fff;
+  border: none;
+  padding: 13px 30px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s ease;
+}
+.af-save:hover { opacity: 0.88; }
+.af-save:disabled { opacity: 0.5; cursor: not-allowed; }
+.af-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 13px 26px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.af-cancel:hover { background: var(--surface-2); }

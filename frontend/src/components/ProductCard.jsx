@@ -1,31 +1,60 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useWishlist } from '../context/WishlistContext'
 import "./ProductCard.css";
 
-
 export default function ProductCard({ product }) {
+  // Real MRP from product data; only show a discount if it's set above price.
+  const mrp = Number(product.mrp) || 0;
+  const hasDiscount = mrp > product.price;
+  const off = hasDiscount ? Math.round(((mrp - product.price) / mrp) * 100) : 0;
+
+  const { isWished, toggleWishlist } = useWishlist();
+  const wished = isWished(product.id);
+
   return (
-    <div className="card h-100 shadow-sm">
-      <img 
-        src={product.image} 
-        className="card-img-top" 
-        alt={product.title} 
-        style={{ height: 150, objectFit: 'cover' }}
-      />
+    <Link to={`/products/${product.id}`} className="ss-card">
+      <div className="ss-card-media">
+        <img
+          src={product.image}
+          alt={product.title}
+          loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='400'><rect width='100%25' height='100%25' fill='%23f0f0f0'/><text x='50%25' y='50%25' font-size='16' fill='%23999' text-anchor='middle' dy='.3em'>No image</text></svg>";
+          }}
+        />
+        <button
+          type="button"
+          className={`ss-wish ${wished ? "wished" : ""}`}
+          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+          aria-pressed={wished}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWishlist(product);
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24"
+            fill={wished ? "currentColor" : "none"}
+            stroke="currentColor" strokeWidth="1.8"
+            strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+          </svg>
+        </button>
+        {hasDiscount && <span className="ss-tag">{off}% OFF</span>}
+      </div>
 
-      <div className="card-body d-flex flex-column">
-        <h5 className="card-title">{product.title}</h5>
-
-        <p className="card-text text-muted mb-2">
-          ₹{product.price}
-        </p>
-
-        <div className="mt-auto">
-          <Link to={`/products/${product.id}`} className="btn btn-primary w-100">
-            View
-          </Link>
+      <div className="ss-card-body">
+        <p className="ss-brand">AXEN WEAR</p>
+        <h3 className="ss-name">{product.title}</h3>
+        <div className="ss-price-row">
+          <span className="ss-price">₹{product.price}</span>
+          {hasDiscount && <span className="ss-mrp">₹{mrp}</span>}
+          {hasDiscount && <span className="ss-off">({off}% OFF)</span>}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

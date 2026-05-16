@@ -1,0 +1,56 @@
+/* ============================================================
+   Footer — site-wide
+   ============================================================ */
+.ss-footer {
+  background: var(--dark);
+  color: #cfcfcf;
+  padding: 56px 32px 30px;
+  font-family: 'Montserrat', sans-serif;
+}
+.ss-footer-cols {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+.ss-footer-cols h4 {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+.ss-footer-cols h5 {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 16px;
+}
+.ss-footer-cols p { font-size: 0.88rem; line-height: 1.7; max-width: 320px; }
+.ss-footer-cols a {
+  display: block;
+  color: #cfcfcf;
+  text-decoration: none;
+  font-size: 0.86rem;
+  margin-bottom: 10px;
+  transition: color 0.2s ease;
+}
+.ss-footer-cols a:hover { color: var(--accent); }
+.ss-footer-copy {
+  text-align: center;
+  margin: 44px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}
+
+@media (max-width: 992px) {
+  .ss-footer-cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .ss-footer { padding: 44px 22px 26px; }
+  .ss-footer-cols { grid-template-columns: 1fr; gap: 28px; }
+}

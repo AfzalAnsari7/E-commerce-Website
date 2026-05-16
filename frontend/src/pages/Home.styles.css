@@ -1,0 +1,267 @@
+/* ============================================================
+   Home — The Souled Store style
+   ============================================================ */
+.ss-home { font-family: 'Montserrat', sans-serif; background: #fff; }
+
+/* ---- Hero banner carousel ---- */
+.ss-hero {
+  position: relative;
+  width: 100%;
+  height: 72vh;
+  min-height: 360px;
+  max-height: 760px;
+  overflow: hidden;
+  background: #efefef;
+}
+.ss-hero-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ss-hero-slide {
+  position: relative;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.ss-hero-slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0) 75%);
+}
+.ss-hero-caption {
+  position: relative;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 64px;
+  color: #fff;
+}
+.ss-hero-top {
+  display: block;
+  font-size: clamp(1rem, 2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  margin-bottom: 4px;
+}
+.ss-hero-title {
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.ss-hero-tags {
+  font-size: clamp(0.78rem, 1.4vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.ss-hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #1a1a1a;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.ss-hero-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
+.ss-hero-arrow.left { left: 22px; }
+.ss-hero-arrow.right { right: 22px; }
+
+.ss-hero-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 9px;
+}
+.ss-hero-dots button {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, width 0.2s ease;
+}
+.ss-hero-dots button.on {
+  background: #2b8a86;
+  width: 22px;
+  border-radius: 5px;
+}
+.ss-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 15px 40px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.2s ease;
+}
+.ss-cta:hover { background: var(--accent-hover); transform: translateY(-2px); }
+.ss-cta-light { background: #fff; }
+.ss-cta-light:hover { background: #f0f0f0; }
+
+/* ---- Perks strip (mint band) ---- */
+.ss-perks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 56px;
+  background: #e4f4f1;
+  padding: 26px 24px;
+}
+.ss-perk {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #1a1a1a;
+}
+.ss-perk svg { color: #1a1a1a; flex-shrink: 0; }
+.ss-perk strong {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+.ss-perk span {
+  font-size: 0.86rem;
+  color: #4a4a4a;
+}
+
+/* ---- Sections ---- */
+.ss-section {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 56px 32px;
+}
+.ss-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.ss-section-title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 30px;
+}
+.ss-section-head .ss-section-title { margin: 0; }
+.ss-viewall {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.ss-viewall:hover { color: var(--sale); }
+
+/* ---- Category tiles ---- */
+.ss-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.ss-cat-tile {
+  text-decoration: none;
+  text-align: center;
+  color: var(--text);
+}
+.ss-cat-img {
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  transition: border-color 0.2s ease, transform 0.25s ease;
+}
+.ss-cat-tile:hover .ss-cat-img {
+  border-color: var(--accent);
+  transform: scale(1.04);
+}
+.ss-cat-tile span {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+/* ---- Product grid ---- */
+.ss-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* ---- Promo banner ---- */
+.ss-promo {
+  background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=1920&q=80")
+    center/cover no-repeat;
+  text-align: center;
+  padding: 90px 24px;
+}
+.ss-promo-inner h2 {
+  color: var(--accent);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+.ss-promo-inner p { color: #fff; font-size: 1.05rem; margin-bottom: 28px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 992px) {
+  .ss-product-grid { grid-template-columns: repeat(3, 1fr); }
+  .ss-cat-grid { grid-template-columns: repeat(3, 1fr); }
+  .ss-perks { gap: 32px; }
+}
+@media (max-width: 640px) {
+  .ss-hero { height: 56vh; min-height: 300px; }
+  .ss-hero-caption { padding: 0 28px; }
+  .ss-hero-arrow { width: 38px; height: 38px; font-size: 1.4rem; }
+  .ss-hero-arrow.left { left: 12px; }
+  .ss-hero-arrow.right { right: 12px; }
+  .ss-perks {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 22px 28px;
+  }
+  .ss-product-grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-section { padding: 40px 18px; }
+}

@@ -24,6 +24,9 @@ export function CartProvider({ children }) {
   function updateQty(id, qty) {
     setCart((prev) => prev.map((p) => (p.id === id ? { ...p, qty } : p)));
   }
+  function updateSize(id, size) {
+    setCart((prev) => prev.map((p) => (p.id === id ? { ...p, size } : p)));
+  }
   function removeFromCart(id) {
     setCart((prev) => prev.filter((p) => p.id !== id));
   }
@@ -32,7 +35,7 @@ export function CartProvider({ children }) {
   }
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, updateQty, removeFromCart, clearCart }}
+      value={{ cart, addToCart, updateQty, updateSize, removeFromCart, clearCart }}
     >
       {children}
     </CartContext.Provider>

@@ -3,6 +3,7 @@
     "id": "p1",
     "title": "Classic Sneakers",
     "price": 2499,
+    "category": "Sneakers",
     "image": "https://picsum.photos/seed/sneaker/600/400",
     "description": "Comfortable everyday sneakers."
   },
@@ -10,6 +11,7 @@
     "id": "p2",
     "title": "Denim Jacket",
     "price": 3499,
+    "category": "Men",
     "image": "https://picsum.photos/seed/jacket/600/400",
     "description": "Stylish denim jacket for all seasons."
   },
@@ -17,6 +19,7 @@
     "id": "p3",
     "title": "Wireless Headphones",
     "price": 5599,
+    "category": "Men",
     "image": "https://picsum.photos/seed/headphones/600/400",
     "description": "Noise-cancelling wireless headphones."
   },
@@ -24,6 +27,7 @@
     "id": "p4",
     "title": "Smart Watch",
     "price": 8999,
+    "category": "Women",
     "image": "https://picsum.photos/seed/watch/600/400",
     "description": "Tracks activity & notifications."
   },
@@ -31,6 +35,7 @@
     "id": "p5",
     "title": "Backpack",
     "price": 1999,
+    "category": "Women",
     "image": "https://picsum.photos/seed/backpack/600/400",
     "description": "Durable backpack for everyday use."
   },
@@ -38,6 +43,7 @@
     "id": "p6",
     "title": "Sunglasses",
     "price": 1299,
+    "category": "Women",
     "image": "https://picsum.photos/seed/sunglasses/600/400",
     "description": "UV-protection stylish sunglasses."
   },
@@ -45,6 +51,7 @@
     "id": "TTNCfyBv",
     "title": "Camera Photography",
     "price": 52000,
+    "category": "Men",
     "image": "https://images.pexels.com/photos/598917/pexels-photo-598917.jpeg",
     "description": "A camera image, also known as a photograph, is a visual recording made by a camera when light falls onto a light-sensitive surface, such as photographic film or a digital sensor. The process involves light passing through the camera lens and striking the sensor when the shutter opens for a brief exposure period."
   }
