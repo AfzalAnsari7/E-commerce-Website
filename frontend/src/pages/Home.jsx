@@ -1,9 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../services";
 import ProductCard from "../components/ProductCard";
-import Hero3D from "../components/Hero3D";
 import { Link } from "react-router-dom";
 import "./Home.styles.css";
+
+const SLIDES = [
+  {
+    img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&q=80",
+    top: "EXPLORE",
+    title: "ACCESSORIES",
+    tags: "PERFUMES | BACKPACKS | CAPS | SOCKS",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80",
+    top: "NEW DROP",
+    title: "OVERSIZED TEES",
+    tags: "GRAPHIC | PLAIN | ANIME | PRINTS",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1920&q=80",
+    top: "JUST IN",
+    title: "SNEAKERS",
+    tags: "RUNNING | CASUAL | HIGH-TOPS",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1920&q=80",
+    top: "WINTER EDIT",
+    title: "HOODIES",
+    tags: "ZIPPERS | PULLOVERS | SWEATSHIRTS",
+  },
+];
 
 const CATEGORIES = [
   { name: "Oversized T-Shirts", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600" },
@@ -15,6 +41,7 @@ const CATEGORIES = [
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [slide, setSlide] = useState(0);
 
   useEffect(() => {
     api
@@ -23,31 +50,91 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
+  const go = useCallback(
+    (dir) => setSlide((s) => (s + dir + SLIDES.length) % SLIDES.length),
+    []
+  );
+
+  useEffect(() => {
+    const t = setInterval(() => go(1), 5000);
+    return () => clearInterval(t);
+  }, [go]);
+
   return (
     <div className="ss-home">
 
-      {/* ===== 3D Hero (three.js) ===== */}
-      <section className="ss-hero3d">
-        <div className="ss-hero3d-bg">
-          <Hero3D />
+      {/* ===== Hero banner carousel ===== */}
+      <section className="ss-hero">
+        <div
+          className="ss-hero-track"
+          style={{ transform: `translateX(-${slide * 100}%)` }}
+        >
+          {SLIDES.map((s, i) => (
+            <Link
+              to="/products"
+              className="ss-hero-slide"
+              key={i}
+              style={{ backgroundImage: `url(${s.img})` }}
+            >
+              <div className="ss-hero-caption">
+                <span className="ss-hero-top">{s.top}</span>
+                <h1 className="ss-hero-title">{s.title}</h1>
+                <p className="ss-hero-tags">{s.tags}</p>
+              </div>
+            </Link>
+          ))}
         </div>
-        <div className="ss-slide-content">
-          <p className="ss-slide-eyebrow">New Drop · Interactive 3D</p>
-          <h1 className="ss-slide-title">Wear The Future</h1>
-          <p className="ss-slide-sub">
-            Streetwear, reimagined. Move your cursor — the collection moves with you.
-          </p>
-          <Link to="/products" className="ss-cta">Shop Now</Link>
+
+        <button
+          className="ss-hero-arrow left"
+          onClick={() => go(-1)}
+          aria-label="Previous slide"
+        >
+          ‹
+        </button>
+        <button
+          className="ss-hero-arrow right"
+          onClick={() => go(1)}
+          aria-label="Next slide"
+        >
+          ›
+        </button>
+
+        <div className="ss-hero-dots">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              className={i === slide ? "on" : ""}
+              onClick={() => setSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
-        <div className="ss-hero3d-hint">Move your mouse to interact ✦</div>
       </section>
 
       {/* ===== Perks strip ===== */}
       <section className="ss-perks">
-        <div><strong>FREE SHIPPING</strong><span>On orders above ₹999</span></div>
-        <div><strong>EASY RETURNS</strong><span>15-day return policy</span></div>
-        <div><strong>SECURE PAYMENTS</strong><span>100% protected checkout</span></div>
-        <div><strong>OFFICIAL MERCH</strong><span>Authentic licensed designs</span></div>
+        <div className="ss-perk">
+          <PerkIcon type="cashback" />
+          <div>
+            <strong>10% Cashback</strong>
+            <span>on all App orders</span>
+          </div>
+        </div>
+        <div className="ss-perk">
+          <PerkIcon type="returns" />
+          <div>
+            <strong>30 days Easy Returns</strong>
+            <span>&amp; Exchanges</span>
+          </div>
+        </div>
+        <div className="ss-perk">
+          <PerkIcon type="shipping" />
+          <div>
+            <strong>Free &amp; Fast Shipping</strong>
+            <span>on all prepaid orders</span>
+          </div>
+        </div>
       </section>
 
       {/* ===== Category tiles ===== */}
@@ -126,5 +213,37 @@ export default function Home() {
       </footer>
 
     </div>
+  );
+}
+
+function PerkIcon({ type }) {
+  const c = {
+    width: 30, height: 30, viewBox: "0 0 24 24", fill: "none",
+    stroke: "currentColor", strokeWidth: 1.6,
+    strokeLinecap: "round", strokeLinejoin: "round",
+  };
+  if (type === "cashback")
+    return (
+      <svg {...c}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M14.5 9.5a2.5 2.5 0 0 0-2.5-1.5c-1.4 0-2.5.8-2.5 2s1.1 2 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2a2.5 2.5 0 0 1-2.5-1.5" />
+        <path d="M12 6.5v11" />
+      </svg>
+    );
+  if (type === "returns")
+    return (
+      <svg {...c}>
+        <path d="M3 7l9-4 9 4-9 4-9-4z" />
+        <path d="M3 7v10l9 4 9-4V7" />
+        <path d="M3 7l9 4v10" />
+      </svg>
+    );
+  return (
+    <svg {...c}>
+      <rect x="1" y="6" width="14" height="11" rx="1" />
+      <path d="M15 9h4l3 3v5h-7z" />
+      <circle cx="6" cy="18" r="2" />
+      <circle cx="18" cy="18" r="2" />
+    </svg>
   );
 }
