@@ -10,6 +10,7 @@ const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
+const rateLimit = require("express-rate-limit");
 
 const Product = require("./models/Product");
 const User = require("./models/User");
@@ -18,8 +19,19 @@ const Review = require("./models/Review");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
+// Never fall back to a hard-coded secret: a known signing key lets
+// anyone forge tokens (including admin). Refuse to boot without one.
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 16) {
+  console.error("FATAL: JWT_SECRET is missing or too short. Set a strong JWT_SECRET in the environment.");
+  process.exit(1);
+}
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/eshop";
+
+// Render/most PaaS terminate TLS at a proxy and forward the real
+// client IP in X-Forwarded-For. Trust the first hop so rate limiting
+// keys on the real client, not the shared proxy IP.
+app.set("trust proxy", 1);
 
 // ----------------------
 // Database
@@ -93,6 +105,31 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: "8mb" })); // headroom for review photos
+
+// ----------------------
+// Rate limiting (brute-force / abuse protection on auth routes)
+// ----------------------
+const rlJson = (req, res) =>
+  res.status(429).json({ message: "Too many requests. Please try again later." });
+
+// Login / OTP-verify / reset-confirm: tight, these are guessable secrets
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: rlJson,
+});
+
+// Anything that triggers an outbound email (OTP / reset code): even
+// tighter, so the endpoint can't be used to spam mail or burn SMTP quota
+const emailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: rlJson,
+});
 
 // ----------------------
 // OTP SYSTEM
@@ -301,7 +338,7 @@ function startOrderNotifier() {
 // ----------------------
 
 // Request OTP
-app.post("/api/auth/request-otp", async (req, res) => {
+app.post("/api/auth/request-otp", emailLimiter, async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) return res.status(400).json({ message: "Missing fields" });
@@ -328,15 +365,30 @@ app.post("/api/auth/request-otp", async (req, res) => {
 });
 
 // Verify OTP -> create user
-app.post("/api/auth/verify-otp", async (req, res) => {
+app.post("/api/auth/verify-otp", authLimiter, async (req, res) => {
   try {
     const { email, otp, name, password } = req.body;
     if (!email || !otp) return res.status(400).json({ message: "Missing fields" });
 
     const record = otpStore[email];
     if (!record) return res.status(400).json({ message: "No OTP requested" });
-    if (Date.now() > record.expiresAt) return res.status(400).json({ message: "OTP expired" });
-    if (record.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
+    if (Date.now() > record.expiresAt) {
+      delete otpStore[email];
+      return res.status(400).json({ message: "OTP expired" });
+    }
+    // A 6-digit OTP is trivially brute-forceable without a cap. Burn
+    // the OTP after 5 wrong tries so the attacker must request a new one.
+    if (record.attempts >= 5) {
+      delete otpStore[email];
+      return res.status(400).json({ message: "Too many attempts. Request a new code." });
+    }
+    if (record.otp !== otp) {
+      record.attempts += 1;
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (!password || String(password).length < 6)
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
 
     const hashed = bcrypt.hashSync(password, 8);
     const newUser = await User.create({ name, email, password: hashed, isAdmin: false });
@@ -358,7 +410,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
 });
 
 // Login
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: "Missing fields" });
@@ -381,7 +433,7 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 // Forgot password -> email a reset code (works for any user, incl. admins)
-app.post("/api/auth/forgot-password", async (req, res) => {
+app.post("/api/auth/forgot-password", emailLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required" });
@@ -425,7 +477,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 });
 
 // Reset password using the emailed code
-app.post("/api/auth/reset-password", async (req, res) => {
+app.post("/api/auth/reset-password", authLimiter, async (req, res) => {
   try {
     const { email, code, password } = req.body;
     if (!email || !code || !password)
@@ -470,8 +522,15 @@ app.get("/api/products", async (req, res) => {
   try {
     const { category, q } = req.query;
     const filter = {};
-    if (category && category !== "All") filter.category = category;
-    if (q) filter.title = { $regex: q, $options: "i" };
+    if (category && category !== "All") filter.category = String(category);
+    // Escape regex metacharacters and cap length: an un-escaped raw
+    // query lets a client pass a catastrophic-backtracking pattern
+    // (ReDoS) that hangs the event loop. Also coerces ?q[]= arrays
+    // to a string so it can't become a query operator.
+    if (q) {
+      const safe = String(q).slice(0, 80).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.title = { $regex: safe, $options: "i" };
+    }
     const products = await Product.find(filter).sort({ createdAt: 1 });
     res.json(products);
   } catch (err) {
