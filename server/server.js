@@ -2,20 +2,58 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
-const { nanoid } = require("nanoid");
 const fs = require("fs");
+const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const path = require("path");
 const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
+
+const Product = require("./models/Product");
+const User = require("./models/User");
+const Order = require("./models/Order");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/eshop";
 
-// JSON files
-const productsFile = path.join(__dirname, "data", "products.json");
-const usersFile = path.join(__dirname, "data", "users.json");
+// ----------------------
+// Database
+// ----------------------
+async function connectDB() {
+  await mongoose.connect(MONGODB_URI);
+  console.log("MongoDB connected");
+  await seedFromJSON();
+}
+
+// One-time migration: load the old JSON files into MongoDB if empty
+async function seedFromJSON() {
+  try {
+    if ((await Product.countDocuments()) === 0) {
+      const file = path.join(__dirname, "data", "products.json");
+      if (fs.existsSync(file)) {
+        const items = JSON.parse(fs.readFileSync(file));
+        if (items.length) {
+          await Product.insertMany(items, { ordered: false });
+          console.log(`Seeded ${items.length} products from products.json`);
+        }
+      }
+    }
+    if ((await User.countDocuments()) === 0) {
+      const file = path.join(__dirname, "data", "users.json");
+      if (fs.existsSync(file)) {
+        const users = JSON.parse(fs.readFileSync(file));
+        if (users.length) {
+          await User.insertMany(users, { ordered: false });
+          console.log(`Seeded ${users.length} users from users.json`);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Seed warning:", err.message);
+  }
+}
 
 // ----------------------
 // CORS
@@ -27,35 +65,18 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function(origin, callback) {
-    // allow requests with no origin (like Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'CORS policy: This origin is not allowed';
-      return callback(new Error(msg), false);
+      return callback(new Error('CORS policy: This origin is not allowed'), false);
     }
     return callback(null, true);
   },
   methods: ['GET','POST','PUT','DELETE'],
   credentials: true
 }));
-
-// handle preflight
 app.options('*', cors());
 
-// ----------------------
-// Middleware
-// ----------------------
 app.use(express.json());
-
-// ----------------------
-// Helper functions
-// ----------------------
-function readJSON(file) {
-  return JSON.parse(fs.readFileSync(file));
-}
-function writeJSON(file, data) {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
-}
 
 // ----------------------
 // OTP SYSTEM
@@ -95,10 +116,7 @@ async function createTransporter() {
     }
     return nodemailer.createTransport({
       service: "gmail",
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      }
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
     });
   }
 }
@@ -109,16 +127,16 @@ async function createTransporter() {
 
 // Request OTP
 app.post("/api/auth/request-otp", async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) return res.status(400).json({ message: "Missing fields" });
-
-  const users = readJSON(usersFile);
-  if (users.find(u => u.email === email)) return res.status(400).json({ message: "Email already exists" });
-
-  const otp = generateOtp();
-  otpStore[email] = { otp, expiresAt: Date.now() + 5*60*1000, attempts: 0 };
-
   try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ message: "Missing fields" });
+
+    const exists = await User.findOne({ email: email.toLowerCase() });
+    if (exists) return res.status(400).json({ message: "Email already exists" });
+
+    const otp = generateOtp();
+    otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000, attempts: 0 };
+
     const transporter = await createTransporter();
     const info = await transporter.sendMail({
       from: '"E-Shop" <no-reply@eshop.com>',
@@ -127,111 +145,147 @@ app.post("/api/auth/request-otp", async (req, res) => {
       html: htmlOtpTemplate(name, otp)
     });
 
-    const preview = nodemailer.getTestMessageUrl(info);
-    return res.json({ message: "OTP sent", preview });
-
+    return res.json({ message: "OTP sent", preview: nodemailer.getTestMessageUrl(info) });
   } catch (err) {
-    console.error("Email sending failed:", err.message);
+    console.error("request-otp failed:", err.message);
     return res.status(500).json({ message: "Failed to send OTP email" });
   }
 });
 
-// Verify OTP
-app.post("/api/auth/verify-otp", (req, res) => {
-  const { email, otp, name, password } = req.body;
-  if (!email || !otp) return res.status(400).json({ message: "Missing fields" });
+// Verify OTP -> create user
+app.post("/api/auth/verify-otp", async (req, res) => {
+  try {
+    const { email, otp, name, password } = req.body;
+    if (!email || !otp) return res.status(400).json({ message: "Missing fields" });
 
-  const record = otpStore[email];
-  if (!record) return res.status(400).json({ message: "No OTP requested" });
-  if (Date.now() > record.expiresAt) return res.status(400).json({ message: "OTP expired" });
-  if (record.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
+    const record = otpStore[email];
+    if (!record) return res.status(400).json({ message: "No OTP requested" });
+    if (Date.now() > record.expiresAt) return res.status(400).json({ message: "OTP expired" });
+    if (record.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
 
-  const users = readJSON(usersFile);
-  const hashed = bcrypt.hashSync(password, 8);
-  const newUser = { id: nanoid(8), name, email, password: hashed, isAdmin: false };
-  users.push(newUser);
-  writeJSON(usersFile, users);
+    const hashed = bcrypt.hashSync(password, 8);
+    const newUser = await User.create({ name, email, password: hashed, isAdmin: false });
+    delete otpStore[email];
 
-  delete otpStore[email];
-
-  const token = jwt.sign({ id: newUser.id, email: newUser.email, isAdmin: newUser.isAdmin }, JWT_SECRET, { expiresIn: "7d" });
-  res.json({
-    message: "OTP verified, registration successful",
-    token,
-    user: { id: newUser.id, name: newUser.name, email: newUser.email, isAdmin: newUser.isAdmin }
-  });
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, isAdmin: newUser.isAdmin },
+      JWT_SECRET, { expiresIn: "7d" }
+    );
+    res.json({
+      message: "OTP verified, registration successful",
+      token,
+      user: { id: newUser.id, name: newUser.name, email: newUser.email, isAdmin: newUser.isAdmin }
+    });
+  } catch (err) {
+    console.error("verify-otp failed:", err.message);
+    res.status(500).json({ message: "Registration failed" });
+  }
 });
 
 // Login
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: "Missing fields" });
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: "Missing fields" });
 
-  const users = readJSON(usersFile);
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-  const ok = bcrypt.compareSync(password, user.password);
-  if (!ok) return res.status(400).json({ message: "Invalid credentials" });
+    if (!bcrypt.compareSync(password, user.password))
+      return res.status(400).json({ message: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user.id, email: user.email, isAdmin: user.isAdmin }, JWT_SECRET, { expiresIn: "7d" });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin } });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, isAdmin: user.isAdmin },
+      JWT_SECRET, { expiresIn: "7d" }
+    );
+    res.json({ token, user: { id: user.id, name: user.name, email: user.email, isAdmin: user.isAdmin } });
+  } catch (err) {
+    console.error("login failed:", err.message);
+    res.status(500).json({ message: "Login failed" });
+  }
 });
 
-// Products
-app.get("/api/products", (req, res) => {
-  const products = readJSON(productsFile);
-  res.json(products);
+// ----------------------
+// PRODUCTS
+// ----------------------
+app.get("/api/products", async (req, res) => {
+  try {
+    const { category, q } = req.query;
+    const filter = {};
+    if (category && category !== "All") filter.category = category;
+    if (q) filter.title = { $regex: q, $options: "i" };
+    const products = await Product.find(filter).sort({ createdAt: 1 });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load products" });
+  }
 });
 
-app.get("/api/products/:id", (req, res) => {
-  const products = readJSON(productsFile);
-  const p = products.find(x => x.id === req.params.id);
-  if (!p) return res.status(404).json({ message: "Not found" });
-  res.json(p);
+app.get("/api/products/:id", async (req, res) => {
+  try {
+    const p = await Product.findOne({ id: req.params.id });
+    if (!p) return res.status(404).json({ message: "Not found" });
+    res.json(p);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load product" });
+  }
 });
 
+// ----------------------
 // Auth middleware
+// ----------------------
 function authMiddleware(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ message: "Unauthorized" });
-  const token = auth.split(" ")[1];
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
+    req.user = jwt.verify(auth.split(" ")[1], JWT_SECRET);
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 }
 
-// Admin product route
-app.post("/api/admin/products", authMiddleware, (req, res) => {
-  if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
-  const { title, price, image, description, category } = req.body;
-  if (!title || !price) return res.status(400).json({ message: "Missing fields" });
+// Admin: add product
+app.post("/api/admin/products", authMiddleware, async (req, res) => {
+  try {
+    if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
+    const { title, price, image, description, category } = req.body;
+    if (!title || !price) return res.status(400).json({ message: "Missing fields" });
 
-  const products = readJSON(productsFile);
-  const newProduct = {
-    id: nanoid(8),
-    title,
-    price,
-    category: category || "Men",
-    image: image || "https://picsum.photos/600/400",
-    description: description || "",
-  };
-  products.push(newProduct);
-  writeJSON(productsFile, products);
-  res.json(newProduct);
+    const newProduct = await Product.create({
+      title,
+      price,
+      category: category || "Men",
+      image: image || "https://picsum.photos/600/400",
+      description: description || "",
+    });
+    res.json(newProduct);
+  } catch (err) {
+    console.error("add product failed:", err.message);
+    res.status(500).json({ message: "Failed to add product" });
+  }
 });
 
-// Orders
-app.post("/api/orders", authMiddleware, (req, res) => {
-  const { items } = req.body;
-  if (!items || !Array.isArray(items)) return res.status(400).json({ message: "Invalid order" });
-  const orderId = nanoid(10);
-  res.json({ orderId, itemsCount: items.length });
+// Orders (now persisted)
+app.post("/api/orders", authMiddleware, async (req, res) => {
+  try {
+    const { items } = req.body;
+    if (!items || !Array.isArray(items)) return res.status(400).json({ message: "Invalid order" });
+    const total = items.reduce((s, it) => s + (it.price || 0) * (it.qty || 1), 0);
+    const order = await Order.create({ userId: req.user.id, items, total });
+    res.json({ orderId: order.id, itemsCount: items.length, total });
+  } catch (err) {
+    console.error("order failed:", err.message);
+    res.status(500).json({ message: "Failed to place order" });
+  }
 });
 
-// Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// ----------------------
+// Start
+// ----------------------
+connectDB()
+  .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err.message);
+    process.exit(1);
+  });
