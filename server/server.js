@@ -59,9 +59,14 @@ async function seedFromJSON() {
 // ----------------------
 // CORS
 // ----------------------
+// Origins allowed to call this API. localhost is for dev; the
+// production frontend URL is supplied via the ALLOWED_ORIGINS env
+// var (comma-separated) so deploys don't need a code change.
 const allowedOrigins = [
-  'https://smart-e-commerce.netlify.app',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  ...(process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+    : ['https://smart-e-commerce.netlify.app'])
 ];
 
 app.use(cors({
