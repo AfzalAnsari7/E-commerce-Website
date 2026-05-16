@@ -1,68 +1,76 @@
 .details-container {
   max-width: 1100px;
-  margin: 40px auto;
-  padding: 20px;
+  margin: 48px auto;
+  padding: 32px;
   display: flex;
-  gap: 40px;
+  gap: 48px;
   align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
-.details-left {
-  flex: 1;
-}
-
-.details-right {
-  flex: 1;
-}
+.details-left { flex: 1; }
+.details-right { flex: 1; }
 
 .details-image {
   width: 100%;
-  height: 380px;
+  height: 400px;
   object-fit: cover;
-  border-radius: 18px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: var(--radius);
+  background: #fff;
+  transition: transform 0.3s ease;
 }
-
-.details-image:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-}
+.details-image:hover { transform: scale(1.02); }
 
 .details-right h1 {
-  font-size: 30px;
-  margin-bottom: 10px;
-  font-weight: 700;
-  color: #222;
+  font-size: 32px;
+  margin-bottom: 12px;
+  font-weight: 800;
+  color: var(--text);
 }
 
 .price {
-  font-size: 26px;
-  color: #0a84ff;
-  font-weight: 600;
+  font-size: 28px;
+  color: var(--text);
+  font-weight: 800;
   margin-bottom: 20px;
 }
 
 .description {
   font-size: 16px;
-  line-height: 1.7;
-  margin-bottom: 30px;
-  color: #555;
+  line-height: 1.75;
+  margin-bottom: 32px;
+  color: var(--text-muted);
 }
 
 .add-btn {
-  background: #111;
-  color: white;
+  background: var(--accent);
+  color: #1a1a1a;
   border: none;
   padding: 14px 32px;
   font-size: 16px;
-  border-radius: 10px;
+  font-weight: 700;
+  border-radius: var(--radius);
   cursor: pointer;
-  transition: 0.3s ease;
-  width: 200px;
+  transition: background 0.2s ease, transform 0.15s ease;
+  min-width: 200px;
+}
+.add-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
 }
 
-.add-btn:hover {
-  background: #333;
-  transform: translateY(-2px);
+@media (max-width: 768px) {
+  .details-container {
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px;
+    margin: 24px 16px;
+  }
+  .details-image { height: 280px; }
+  .details-right h1 { font-size: 26px; }
+  .price { font-size: 24px; }
+  .add-btn { width: 100%; }
 }

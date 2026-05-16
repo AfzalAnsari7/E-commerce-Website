@@ -1,91 +1,99 @@
-/* Global Page Setup */
+/* ============================================================
+   Design System — single source of truth for the whole app
+   ============================================================ */
+:root {
+  --bg:          #ffffff;   /* page background        */
+  --surface:     #ffffff;   /* cards / panels         */
+  --surface-2:   #f4f4f4;   /* inputs / nested        */
+  --border:      #e6e6e6;   /* hairlines              */
+  --text:        #1a1a1a;   /* primary text           */
+  --text-muted:  #6f6f6f;   /* secondary text         */
+  --accent:      #f5d000;   /* brand yellow           */
+  --accent-hover:#e2bf00;
+  --dark:        #1a1a1a;   /* primary buttons        */
+  --sale:        #ff3e6c;   /* discount / price drop  */
+  --success:     #03a685;   /* extra-off / in stock   */
+  --danger:      #ff3e6c;
+  --danger-hover:#e22b56;
+  --radius:      8px;
+  --shadow:      0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+* { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #050504;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hero Section Full Screen */
-.hero-section {
-  background: 
-    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-    url("https://images.unsplash.com/photo-1542293787938-c9e299b88015")
-    center/cover no-repeat;
-  min-height: 85vh;
-  width: 100%;
+h1, h2, h3, h4, h5, h6 { color: var(--text); }
+a { color: var(--text); }
+
+/* ---- Bootstrap form + button overrides (auth / admin pages) ---- */
+.form-control,
+.form-control:focus {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.form-control:focus {
+  border-color: var(--text);
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.08);
+}
+.form-control::placeholder { color: var(--text-muted); }
+.form-label {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* Product Card Hover Animation */
-.product-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  border-radius: 15px;
+.btn-primary,
+.btn-success {
+  background: var(--dark);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  padding: 12px 26px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.btn-primary:hover,
+.btn-success:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+/* ---- Auth / form pages: a centered card ---- */
+.row.justify-content-center > [class*="col-md-6"] {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  margin-top: 40px;
+  box-shadow: var(--shadow);
+}
+.row.justify-content-center h3 {
+  margin-bottom: 22px;
+  font-weight: 800;
 }
 
-/* Footer Section */
-/* FOOTER FULL WIDTH */
-.footer-section {
-  width: 100%;
-  margin: 0;
-  padding: 40px 0;
-  background: #0c0b0b;   /* dark black */
-  color: #e6e6e6;
-  text-align: center;
-}
+/* ---- Generic cards (Admin "existing products") ---- */
+.card { color: var(--text); }
 
-/* Inner wrapper for content */
-.footer-inner {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 20px;   /* small side padding */
-}
-
-/* Title */
-.footer-inner h5 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-/* Description */
-.footer-inner p.small {
-  color: #bdbdbd;
-  margin-bottom: 18px;
-}
-
-/* Footer links */
-.footer-links a {
-  margin: 0 12px;
-  font-size: 0.95rem;
-  color: #cccccc;
-  text-decoration: none;
-  transition: 0.25s ease;
-}
-
-.footer-links a:hover {
-  color: #f2b400;
-}
-
-/* Copyright */
-.footer-copy {
-  margin-top: 20px;
-  color: #888;
-  font-size: 0.85rem;
-}
-
-
-/* Responsive Fixes */
-@media(max-width: 768px) {
-  .hero-section {
-    min-height: 60vh;
-    padding: 40px 0;
-  }
-
-  h1.display-4 {
-    font-size: 2rem;
+/* ---- Auth / form pages responsive ---- */
+@media (max-width: 576px) {
+  .row.justify-content-center > [class*="col-md-6"] {
+    padding: 26px 20px;
+    margin-top: 20px;
   }
 }

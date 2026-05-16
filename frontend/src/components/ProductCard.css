@@ -1,40 +1,103 @@
-/* Modern Product Card */
-
-.card {
-  border-radius: 16px !important;
+/* Product Card — The Souled Store style */
+.ss-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   overflow: hidden;
-  background: #ba8d8d;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+  color: var(--text);
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+.ss-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-4px);
 }
 
-
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+.ss-card-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  background: var(--surface-2);
+  overflow: hidden;
 }
-
-.card-img-top {
-  border-bottom: 1px solid #eee;
+.ss-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
 }
+.ss-card:hover .ss-card-media img { transform: scale(1.05); }
 
-.card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #000000;
-}
-
-.card-text {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #e67e22 !important;
-}
-
-.card .btn-primary {
-  background: #f39c12;
+.ss-wish {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   border: none;
-  transition: 0.2s ease;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.ss-wish:hover { color: var(--sale); transform: scale(1.1); }
+
+.ss-tag {
+  position: absolute;
+  left: 0;
+  bottom: 12px;
+  background: var(--sale);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 5px 12px 5px 10px;
+  border-radius: 0 4px 4px 0;
 }
 
-.card .btn-primary:hover {
-  background: #d9830c;
+.ss-card-body { padding: 14px 14px 18px; }
+.ss-brand {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin: 0 0 5px;
+  text-transform: uppercase;
+}
+.ss-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.4em;
+}
+.ss-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ss-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.ss-mrp {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+.ss-off {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--sale);
 }

@@ -6,28 +6,35 @@ import ProductDetails from './pages/ProductDetails'
 import Cart from './pages/Cart'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import VerifyOTP from './pages/VerifyOTP' // <-- import here
+import VerifyOTP from './pages/VerifyOTP'
 import Admin from './pages/Admin'
 import Header from './components/Header'
 import { CartProvider } from './context/CartContext'
 
-export default function App(){
+/* Bootstrap-grid pages (Login/Register/OTP/Admin) need a .container
+   parent so their .row negative margins don't overflow. Home,
+   ProductList, Cart and ProductDetails manage their own full-bleed
+   layout, so they are rendered without the container. */
+function Contained({ children }) {
+  return <div className="container py-5">{children}</div>
+}
+
+export default function App() {
   return (
     <CartProvider>
       <Header />
-      <div className="container my-4">
+      <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/verify-otp" element={<VerifyOTP />} />
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/verify-otp" element={<Contained><VerifyOTP /></Contained>} />
+          <Route path="/login" element={<Contained><Login /></Contained>} />
+          <Route path="/register" element={<Contained><Register /></Contained>} />
+          <Route path="/admin" element={<Contained><Admin /></Contained>} />
         </Routes>
-      </div>
+      </main>
     </CartProvider>
   )
 }

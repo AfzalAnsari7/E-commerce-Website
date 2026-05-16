@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import api from "../services"; // your axios instance
 
 export default function VerifyOTP() {
@@ -10,9 +10,10 @@ export default function VerifyOTP() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // No registration data in route state → safely redirect (no
+  // navigate() during render, which triggers a React warning).
   if (!email) {
-    navigate("/register");
-    return null;
+    return <Navigate to="/register" replace />;
   }
 
   async function submit(e) {

@@ -1,99 +1,96 @@
 .cart-container {
   max-width: 900px;
-  margin: 40px auto;
+  margin: 48px auto;
   padding: 20px;
 }
 
-.description {
-    font-size: 16px;
-    line-height: 1.7;
-    margin-bottom: 30px;
-    color: #ffffff;
-}
-.details-right h1 {
-    font-size: 30px;
-    margin-bottom: 10px;
-    font-weight: 700;
-    color: #ffffff;
-}
 .cart-title {
   font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: white;
+  font-weight: 800;
+  margin-bottom: 28px;
+  color: var(--text);
 }
 
 .empty-cart {
   text-align: center;
-  padding: 50px 0;
+  padding: 80px 0;
   font-size: 22px;
-  color: #fdf9f9;
+  color: var(--text-muted);
 }
 
 .cart-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .cart-item {
-    color: black;
   display: grid;
-  grid-template-columns: 1fr 100px 100px 60px;
+  grid-template-columns: 1fr 100px 110px 50px;
   align-items: center;
-  padding: 18px;
-  border-radius: 14px;
-  background: #5c582ed6;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  gap: 16px;
+  padding: 18px 22px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s ease;
 }
+.cart-item:hover { border-color: var(--accent); }
 
 .item-details h4 {
   font-size: 18px;
-  margin-bottom: 5px;
+  margin: 0 0 6px;
+  color: var(--text);
 }
 
-.price {
-  color: #dedbc1;
-  font-size: 16px;
+.cart-item .price {
+  color: var(--text-muted);
+  font-size: 15px;
   font-weight: 600;
 }
 
 .qty-input {
-  width: 80px;
-  padding: 8px;
+  width: 100%;
+  padding: 9px;
   border-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
   font-size: 16px;
+  text-align: center;
 }
 
 .item-total {
-  font-weight: bold;
-  color: #000000;
+  font-weight: 800;
+  color: var(--text);
+  text-align: right;
 }
 
 .remove-btn {
   border: none;
-  background: #ff4d4d;
-  color: rgb(0, 0, 0);
+  background: var(--danger);
+  color: #fff;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  font-size: 15px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.2s ease;
 }
-
-.remove-btn:hover {
-  background: #e51616;
-}
+.remove-btn:hover { background: var(--danger-hover); }
 
 .cart-footer {
-  margin-top: 30px;
+  margin-top: 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #ffffff;
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
 }
+.cart-footer h3 { margin: 0; font-weight: 800; }
 
 .clear-btn,
 .order-btn {
@@ -101,40 +98,34 @@
   border: none;
   cursor: pointer;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 700;
   margin-left: 10px;
-  transition: 0.3s;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.clear-btn {
-  background: #ddd;
-}
+.clear-btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+.clear-btn:hover { background: var(--border); }
 
-.clear-btn:hover {
-  background: #c2c2c2;
-}
-
-.order-btn {
-  background: #f4cb03;
-  color: rgb(0, 0, 0);
-}
-
-.order-btn:hover {
-  background: #f9fbfa;
-}
+.order-btn { background: var(--accent); color: #1a1a1a; }
+.order-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
 @media (max-width: 700px) {
+  .cart-container { margin: 24px auto; padding: 16px; }
   .cart-item {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 15px;
+    grid-template-columns: 1fr auto auto;
+    row-gap: 14px;
+    padding: 16px;
   }
-
-  .qty-input {
-    width: 60px;
-  }
-
+  .item-details { grid-column: 1 / -1; }   /* title on its own row */
+  .qty-input { width: 70px; }
+  .item-total { text-align: center; }
   .cart-footer {
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    align-items: stretch;
+    text-align: center;
   }
+  .cart-footer > div { display: flex; gap: 10px; }
+  .clear-btn, .order-btn { margin: 0; flex: 1; }
 }

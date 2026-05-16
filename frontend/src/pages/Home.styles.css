@@ -1,0 +1,249 @@
+/* ============================================================
+   Home — The Souled Store style
+   ============================================================ */
+.ss-home { font-family: 'Montserrat', sans-serif; background: #fff; }
+
+/* ---- 3D Hero (three.js) ---- */
+.ss-hero3d {
+  position: relative;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+}
+.ss-hero3d-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.ss-hero3d-bg canvas,
+.ss-hero3d-canvas { width: 100% !important; height: 100% !important; display: block; }
+/* black shade overlay removed — full-bleed 3D scene */
+.ss-hero3d-hint {
+  position: absolute;
+  bottom: 22px;
+  right: 32px;
+  z-index: 2;
+  color: rgba(0,0,0,0.45);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.ss-slide-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 60px;
+  width: 100%;
+  color: var(--text);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+}
+.ss-slide-eyebrow {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--text);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  margin-bottom: 18px;
+}
+.ss-slide-title {
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin: 0 0 14px;
+  color: var(--text);
+  text-transform: uppercase;
+}
+.ss-slide-sub {
+  font-size: 1.05rem;
+  font-weight: 400;
+  margin-bottom: 30px;
+  max-width: 420px;
+}
+.ss-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 15px 40px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.2s ease;
+}
+.ss-cta:hover { background: var(--accent-hover); transform: translateY(-2px); }
+.ss-cta-light { background: #fff; }
+.ss-cta-light:hover { background: #f0f0f0; }
+
+/* ---- Perks strip ---- */
+.ss-perks {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.ss-perks > div {
+  text-align: center;
+  padding: 22px 12px;
+  border-right: 1px solid var(--border);
+}
+.ss-perks > div:last-child { border-right: none; }
+.ss-perks strong {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.ss-perks span { font-size: 0.76rem; color: var(--text-muted); }
+
+/* ---- Sections ---- */
+.ss-section {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 56px 32px;
+}
+.ss-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.ss-section-title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 30px;
+}
+.ss-section-head .ss-section-title { margin: 0; }
+.ss-viewall {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.ss-viewall:hover { color: var(--sale); }
+
+/* ---- Category tiles ---- */
+.ss-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+}
+.ss-cat-tile {
+  text-decoration: none;
+  text-align: center;
+  color: var(--text);
+}
+.ss-cat-img {
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  transition: border-color 0.2s ease, transform 0.25s ease;
+}
+.ss-cat-tile:hover .ss-cat-img {
+  border-color: var(--accent);
+  transform: scale(1.04);
+}
+.ss-cat-tile span {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+/* ---- Product grid ---- */
+.ss-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* ---- Promo banner ---- */
+.ss-promo {
+  background:
+    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+    url("https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=1920&q=80")
+    center/cover no-repeat;
+  text-align: center;
+  padding: 90px 24px;
+}
+.ss-promo-inner h2 {
+  color: var(--accent);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+.ss-promo-inner p { color: #fff; font-size: 1.05rem; margin-bottom: 28px; }
+
+/* ---- Footer ---- */
+.ss-footer {
+  background: var(--dark);
+  color: #cfcfcf;
+  padding: 56px 32px 30px;
+}
+.ss-footer-cols {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+.ss-footer-cols h4 {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0 0 12px;
+}
+.ss-footer-cols h5 {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 16px;
+}
+.ss-footer-cols p { font-size: 0.88rem; line-height: 1.7; max-width: 320px; }
+.ss-footer-cols a {
+  display: block;
+  color: #cfcfcf;
+  text-decoration: none;
+  font-size: 0.86rem;
+  margin-bottom: 10px;
+  transition: color 0.2s ease;
+}
+.ss-footer-cols a:hover { color: var(--accent); }
+.ss-footer-copy {
+  text-align: center;
+  margin: 44px 0 0;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 992px) {
+  .ss-product-grid { grid-template-columns: repeat(3, 1fr); }
+  .ss-cat-grid { grid-template-columns: repeat(3, 1fr); }
+  .ss-perks { grid-template-columns: repeat(2, 1fr); }
+  .ss-perks > div:nth-child(2) { border-right: none; }
+  .ss-footer-cols { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .ss-product-grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .ss-slide-content { padding: 0 24px; }
+  .ss-section { padding: 40px 18px; }
+  .ss-footer-cols { grid-template-columns: 1fr; gap: 28px; }
+}
