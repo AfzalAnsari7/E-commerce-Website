@@ -193,7 +193,7 @@ export default function Home() {
       <footer className="ss-footer">
         <div className="ss-footer-cols">
           <div>
-            <h4>STREETSOUL</h4>
+            <h4>AXEN WEAR</h4>
             <p>Officially yours. Streetwear, pop-culture &amp; everyday essentials.</p>
           </div>
           <div>
@@ -219,7 +219,7 @@ export default function Home() {
           </div>
         </div>
         <p className="ss-footer-copy">
-          © {new Date().getFullYear()} STREETSOUL. All rights reserved.
+          © {new Date().getFullYear()} Axen Wear. All rights reserved.
         </p>
       </footer>
 

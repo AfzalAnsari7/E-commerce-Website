@@ -176,8 +176,13 @@
   color: var(--text);
   text-decoration: none;
   cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
   transition: color 0.2s ease;
 }
+.ss-account { position: relative; }
 .ss-action:hover { color: var(--sale); }
 .ss-action-label {
   font-size: 0.64rem;
@@ -205,18 +210,19 @@
 /* Account dropdown */
 .ss-dropdown {
   position: absolute;
-  top: 130%;
+  top: calc(100% + 10px);
   right: 0;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  min-width: 170px;
+  min-width: 180px;
   padding: 8px;
   display: none;
   flex-direction: column;
+  z-index: 1100;
 }
-.ss-account:hover .ss-dropdown { display: flex; }
+.ss-dropdown.open { display: flex; }
 .ss-dropdown a,
 .ss-dropdown button {
   text-align: left;

@@ -37,7 +37,7 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="ss-card-body">
-        <p className="ss-brand">STREETSOUL</p>
+        <p className="ss-brand">AXEN WEAR</p>
         <h3 className="ss-name">{product.title}</h3>
         <div className="ss-price-row">
           <span className="ss-price">₹{product.price}</span>

@@ -90,7 +90,7 @@ function generateOtp() {
 function htmlOtpTemplate(name, otp) {
   return `
     <div style="font-family: Arial, sans-serif; color: #333;">
-      <h2 style="color:#2b6cb0">E-Shop — Verify your email</h2>
+      <h2 style="color:#2b6cb0">Axen Wear — Verify your email</h2>
       <p>Hi ${name},</p>
       <p>Your verification code is:</p>
       <div style="font-size:30px; font-weight:bold; background:#f3f6fb; padding:10px; display:inline-block; letter-spacing:4px;">
@@ -139,7 +139,7 @@ app.post("/api/auth/request-otp", async (req, res) => {
 
     const transporter = await createTransporter();
     const info = await transporter.sendMail({
-      from: '"E-Shop" <no-reply@eshop.com>',
+      from: '"Axen Wear" <no-reply@axenwear.com>',
       to: email,
       subject: "Verify your email",
       html: htmlOtpTemplate(name, otp)

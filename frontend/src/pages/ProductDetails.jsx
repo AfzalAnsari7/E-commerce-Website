@@ -64,7 +64,7 @@ export default function ProductDetails() {
 
         {/* Info */}
         <div className="pd-info">
-          <p className="pd-brand">STREETSOUL</p>
+          <p className="pd-brand">AXEN WEAR</p>
           <h1 className="pd-title">{product.title}</h1>
 
           <div className="pd-rating">

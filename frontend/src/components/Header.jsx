@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -20,12 +20,31 @@ export default function Header() {
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [acctOpen, setAcctOpen] = useState(false);
+  const acctRef = useRef(null);
 
   // lock body scroll while the drawer is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+
+  // close the account menu on outside click / Escape
+  useEffect(() => {
+    if (!acctOpen) return;
+    function onDoc(e) {
+      if (acctRef.current && !acctRef.current.contains(e.target)) {
+        setAcctOpen(false);
+      }
+    }
+    function onEsc(e) { if (e.key === "Escape") setAcctOpen(false); }
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [acctOpen]);
 
   function onSearch(e) {
     e.preventDefault();
@@ -70,7 +89,7 @@ export default function Header() {
 
         {/* Center: logo */}
         <Link to="/" className="ss-logo">
-          STREET<span>SOUL</span>
+          AXEN <span>WEAR</span>
         </Link>
 
         {/* Right: search + actions */}
@@ -90,13 +109,39 @@ export default function Header() {
 
           <div className="ss-actions">
             {user ? (
-              <div className="ss-action ss-account">
-                <Icon type="user" />
-                <span className="ss-action-label">{user.name.split(" ")[0]}</span>
-                <div className="ss-dropdown">
-                  {user.isAdmin && <Link to="/admin">Admin Panel</Link>}
-                  <Link to="/cart">My Cart</Link>
-                  <button onClick={logout}>Logout</button>
+              <div className="ss-account" ref={acctRef}>
+                <button
+                  type="button"
+                  className="ss-action ss-account-btn"
+                  aria-haspopup="true"
+                  aria-expanded={acctOpen}
+                  onClick={() => setAcctOpen((o) => !o)}
+                >
+                  <Icon type="user" />
+                  <span className="ss-action-label">
+                    {user.name.split(" ")[0]}
+                  </span>
+                </button>
+                <div className={`ss-dropdown ${acctOpen ? "open" : ""}`}>
+                  {user.isAdmin && (
+                    <Link to="/admin" onClick={() => setAcctOpen(false)}>
+                      Admin Panel
+                    </Link>
+                  )}
+                  <Link to="/cart" onClick={() => setAcctOpen(false)}>
+                    My Cart
+                  </Link>
+                  <Link to="/wishlist" onClick={() => setAcctOpen(false)}>
+                    My Wishlist
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setAcctOpen(false);
+                      logout();
+                    }}
+                  >
+                    Logout
+                  </button>
                 </div>
               </div>
             ) : (
@@ -130,7 +175,7 @@ export default function Header() {
       />
       <aside className={`ss-drawer ${menuOpen ? "open" : ""}`}>
         <div className="ss-drawer-head">
-          <span className="ss-logo sm">STREET<span>SOUL</span></span>
+          <span className="ss-logo sm">AXEN <span>WEAR</span></span>
           <button
             className="ss-drawer-close"
             aria-label="Close menu"
