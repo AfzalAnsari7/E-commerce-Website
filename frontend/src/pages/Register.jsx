@@ -12,12 +12,7 @@ export default function Register() {
   async function submit(e) {
     e.preventDefault();
     try {
-      const res = await api.post("/api/auth/request-otp", { name, email, password });
-
-      // For Ethereal preview (testing only)
-      if (res.data.preview) {
-        alert("OTP Email Preview URL (Ethereal): " + res.data.preview);
-      }
+      await api.post("/api/auth/request-otp", { name, email, password });
 
       alert("OTP sent to email! Check your inbox.");
       navigate("/verify-otp", { state: { name, email, password } });
