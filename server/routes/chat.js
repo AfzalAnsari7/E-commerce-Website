@@ -93,7 +93,8 @@ router.post("/", chatLimiter, async (req, res) => {
     res.json({ reply });
   } catch (err) {
     console.error("Chat error:", err);
-    res.status(500).json({ error: "Something went wrong. Please try again." });
+    // TEMP DEBUG: surface the real cause so we can diagnose. Remove once fixed.
+    res.status(500).json({ error: "Something went wrong. Please try again.", detail: String(err && err.message || err) });
   }
 });
 
