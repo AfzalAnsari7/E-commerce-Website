@@ -15,6 +15,10 @@ if (!GEMINI_API_KEY) {
 }
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
+// Model is env-configurable. gemini-2.0-flash now has a 0 free-tier quota on
+// many projects; gemini-2.5-flash still has free quota. Override with GEMINI_MODEL.
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+
 // Free tiers are rate-limited — protect the endpoint and our quota.
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -74,7 +78,7 @@ router.post("/", chatLimiter, async (req, res) => {
     const systemInstruction = `${BASE_PROMPT}\n\n=== PRODUCT CATALOG ===\n${catalog || "(catalog is empty)"}`;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: GEMINI_MODEL,
       systemInstruction,
     });
 
