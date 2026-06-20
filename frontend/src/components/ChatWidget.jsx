@@ -7,13 +7,25 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([]); // { role: "user" | "model", text }
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [models, setModels] = useState([]); // [{ id, label, provider, free }]
+  const [model, setModel] = useState("");
   const bodyRef = useRef(null);
+
+  // Load the list of available models once the chat opens
+  useEffect(() => {
+    if (!open || models.length) return;
+    api
+      .get("/api/chat/models")
+      .then(({ data }) => {
+        setModels(data.models || []);
+        if (data.models?.length) setModel(data.models[0].id);
+      })
+      .catch(() => setModels([]));
+  }, [open, models.length]);
 
   // Auto-scroll to the latest message
   useEffect(() => {
-    if (bodyRef.current) {
-      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-    }
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [messages, loading]);
 
   const send = async () => {
@@ -28,7 +40,8 @@ export default function ChatWidget() {
     try {
       const { data } = await api.post("/api/chat", {
         message: text,
-        history: messages, // prior turns for context
+        history: messages,
+        model, // selected in the dropdown
       });
       setMessages([...next, { role: "model", text: data.reply }]);
     } catch {
@@ -45,13 +58,30 @@ export default function ChatWidget() {
     <div className="chat-widget">
       {open ? (
         <div className="card shadow chat-window">
-          <div className="card-header d-flex justify-content-between align-items-center">
-            <strong>🛍️ Shopping Assistant</strong>
-            <button
-              className="btn-close"
-              aria-label="Close chat"
-              onClick={() => setOpen(false)}
-            />
+          <div className="card-header chat-header">
+            <div className="d-flex justify-content-between align-items-center">
+              <strong>🛍️ Shopping Assistant</strong>
+              <button
+                className="btn-close"
+                aria-label="Close chat"
+                onClick={() => setOpen(false)}
+              />
+            </div>
+            {models.length > 0 && (
+              <select
+                className="form-select form-select-sm mt-2 chat-model-select"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                aria-label="Select AI model"
+              >
+                {models.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                    {m.free ? " · free" : ""}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="card-body chat-body" ref={bodyRef}>
