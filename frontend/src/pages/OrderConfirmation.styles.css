@@ -5,7 +5,7 @@
   max-width: 880px;
   margin: 0 auto;
   padding: 40px 24px 80px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
 }
 .oc-msg {
   text-align: center;
@@ -152,7 +152,7 @@
   cursor: pointer;
   text-decoration: none;
 }
-.oc-btn:hover { background: #000; }
+.oc-btn:hover { background: #1f281c; }
 .oc-btn-light {
   background: #fff;
   color: var(--text);
