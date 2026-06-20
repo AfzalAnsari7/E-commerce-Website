@@ -21,7 +21,6 @@ const PROVIDERS = {
 // `free: true` is just a UI hint. Override the default Gemini model with GEMINI_MODEL.
 const MODELS = [
   { id: process.env.GEMINI_MODEL || "gemini-2.5-flash", label: "Gemini 2.5 Flash", provider: "gemini", free: true },
-  { id: "gemini-2.0-flash", label: "Gemini 2.0 Flash", provider: "gemini", free: true },
   { id: "llama-3.3-70b-versatile", label: "Llama 3.3 70B (Groq)", provider: "groq", free: true },
   { id: "gpt-4o-mini", label: "ChatGPT (GPT-4o mini)", provider: "openai", free: false },
 ];
