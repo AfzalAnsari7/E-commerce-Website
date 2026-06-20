@@ -5,8 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import "./Account.styles.css";
 
 const STATUS_COLOR = {
-  placed: "#0a7", packed: "#0a7", shipped: "#06c",
-  out: "#e69500", delivered: "#0a7",
+  placed: "#7a8273", packed: "#7c8c68", shipped: "#5a7d8c",
+  out: "#c2724e", delivered: "#5b7a4f",
 };
 
 export default function Orders() {
@@ -52,7 +52,7 @@ export default function Orders() {
               <span className="ac-oid">Order #{o.id}</span>
               <span
                 className="ac-badge"
-                style={{ background: STATUS_COLOR[o.status] || "#666" }}
+                style={{ background: STATUS_COLOR[o.status] || "#7a8273" }}
               >
                 {o.statusLabel || o.status}
               </span>

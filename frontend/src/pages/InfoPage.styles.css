@@ -27,4 +27,4 @@
   color: var(--text);
   text-decoration: none;
 }
-.info-back:hover { color: var(--sale); }
+.info-back:hover { color: var(--accent); }
