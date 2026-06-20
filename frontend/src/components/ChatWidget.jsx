@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import api from "../services";
 import "./ChatWidget.css";
+
+const POS_KEY = "chatWidgetPos";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -9,7 +11,20 @@ export default function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const [models, setModels] = useState([]); // [{ id, label, provider, free }]
   const [model, setModel] = useState("");
+  const [pos, setPos] = useState(null); // {x, y} top-left in px, or null = default (bottom-right)
   const bodyRef = useRef(null);
+  const widgetRef = useRef(null);
+  const drag = useRef(null);
+
+  // Restore a previously dragged position
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(POS_KEY));
+      if (saved && typeof saved.x === "number" && typeof saved.y === "number") setPos(saved);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   // Load the list of available models once the chat opens
   useEffect(() => {
@@ -27,6 +42,63 @@ export default function ChatWidget() {
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [messages, loading]);
+
+  // ---- Dragging (mouse + touch via pointer events) ----
+  const clamp = (x, y) => {
+    const el = widgetRef.current;
+    const w = el ? el.offsetWidth : 56;
+    const h = el ? el.offsetHeight : 56;
+    const maxX = window.innerWidth - w - 8;
+    const maxY = window.innerHeight - h - 8;
+    return {
+      x: Math.min(Math.max(8, x), Math.max(8, maxX)),
+      y: Math.min(Math.max(8, y), Math.max(8, maxY)),
+    };
+  };
+
+  const moveDrag = useCallback((e) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.sx;
+    const dy = e.clientY - d.sy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) d.moved = true;
+    setPos(clamp(d.bx + dx, d.by + dy));
+  }, []);
+
+  const endDrag = useCallback(() => {
+    const d = drag.current;
+    window.removeEventListener("pointermove", moveDrag);
+    window.removeEventListener("pointerup", endDrag);
+    if (d) {
+      const el = widgetRef.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        try {
+          localStorage.setItem(POS_KEY, JSON.stringify({ x: r.left, y: r.top }));
+        } catch {
+          /* ignore */
+        }
+      }
+      // A tap (no movement) on the closed bubble opens the chat
+      if (d.isFab && !d.moved) setOpen(true);
+    }
+    drag.current = null;
+  }, [moveDrag]);
+
+  const beginDrag = (e, isFab) => {
+    // When dragging the header, don't hijack clicks on its controls
+    if (!isFab && e.target.closest("button, select, input, a, .btn-close")) return;
+    const el = widgetRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    drag.current = { sx: e.clientX, sy: e.clientY, bx: r.left, by: r.top, moved: false, isFab };
+    window.addEventListener("pointermove", moveDrag);
+    window.addEventListener("pointerup", endDrag);
+  };
+
+  const style = pos
+    ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto" }
+    : undefined;
 
   const send = async () => {
     const text = input.trim();
@@ -55,12 +127,15 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="chat-widget">
+    <div className="chat-widget" ref={widgetRef} style={style}>
       {open ? (
         <div className="card shadow chat-window">
-          <div className="card-header chat-header">
+          <div
+            className="card-header chat-header"
+            onPointerDown={(e) => beginDrag(e, false)}
+          >
             <div className="d-flex justify-content-between align-items-center">
-              <strong>🛍️ Shopping Assistant</strong>
+              <strong title="Drag to move">⠿ 🛍️ Shopping Assistant</strong>
               <button
                 className="btn-close"
                 aria-label="Close chat"
@@ -121,8 +196,9 @@ export default function ChatWidget() {
       ) : (
         <button
           className="btn btn-primary chat-fab"
-          aria-label="Open shopping assistant"
-          onClick={() => setOpen(true)}
+          aria-label="Open shopping assistant (drag to move)"
+          onPointerDown={(e) => beginDrag(e, true)}
+          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setOpen(true)}
         >
           💬
         </button>

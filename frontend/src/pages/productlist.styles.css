@@ -2,7 +2,7 @@
    Product List — professional listing page
    ============================================================ */
 .pl-page {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
   min-height: 100vh;
   padding-bottom: 80px;
@@ -113,7 +113,7 @@
   appearance: none;
   -webkit-appearance: none;
   background: #fff
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%231a1a1a' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>")
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232e3a2b' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>")
     no-repeat right 12px center;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -144,7 +144,7 @@
   text-align: center;
   padding: 110px 24px;
   color: var(--text-muted);
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   min-height: 60vh;
 }
 .pl-state h2 {
@@ -174,7 +174,7 @@
   letter-spacing: 0.06em;
   text-decoration: none;
 }
-.pl-empty-btn:hover { background: #000; }
+.pl-empty-btn:hover { background: #1f281c; }
 
 /* ---- Responsive ---- */
 @media (max-width: 640px) {

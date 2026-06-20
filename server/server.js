@@ -535,7 +535,26 @@ app.get("/api/products", async (req, res) => {
       filter.title = { $regex: safe, $options: "i" };
     }
     const products = await Product.find(filter).sort({ createdAt: 1 });
-    res.json(products);
+
+    // Attach average rating + review count per product (for product-card stars).
+    const ids = products.map((p) => p.id);
+    const stats = await Review.aggregate([
+      { $match: { productId: { $in: ids } } },
+      { $group: { _id: "$productId", avg: { $avg: "$rating" }, count: { $sum: 1 } } },
+    ]);
+    const byId = {};
+    stats.forEach((s) => { byId[String(s._id)] = s; });
+
+    const out = products.map((p) => {
+      const obj = p.toJSON(); // applies schema transform (strips _id/__v, exposes id)
+      const s = byId[p.id];
+      return {
+        ...obj,
+        rating: s ? Math.round(s.avg * 10) / 10 : 0,
+        ratingCount: s ? s.count : 0,
+      };
+    });
+    res.json(out);
   } catch (err) {
     console.error("load products failed:", err.message);
     res.status(500).json({ message: "Failed to load products" });
