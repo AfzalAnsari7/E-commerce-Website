@@ -106,6 +106,9 @@ app.options('*', cors(corsOptions));
 
 app.use(express.json({ limit: "8mb" })); // headroom for review photos
 
+// AI shopping assistant (Google Gemini) — see routes/chat.js
+app.use("/api/chat", require("./routes/chat"));
+
 // ----------------------
 // Rate limiting (brute-force / abuse protection on auth routes)
 // ----------------------
