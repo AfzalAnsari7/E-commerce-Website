@@ -20,3 +20,5 @@ logs/
 .claude/
 
 #changes
+.DS_Store
+**/.DS_Store
