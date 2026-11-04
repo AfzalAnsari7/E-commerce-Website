@@ -1,29 +1,37 @@
 /* ============================================================
    Design System — single source of truth for the whole app
+   "Sage" theme — muted olive/sage palette, deep forest text
    ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap');
+
 :root {
-  --bg:          #ffffff;   /* page background        */
+  --bg:          #f2f3ed;   /* warm pale sage canvas  */
   --surface:     #ffffff;   /* cards / panels         */
-  --surface-2:   #f4f4f4;   /* inputs / nested        */
-  --border:      #e6e6e6;   /* hairlines              */
-  --text:        #1a1a1a;   /* primary text           */
-  --text-muted:  #6f6f6f;   /* secondary text         */
-  --accent:      #f5d000;   /* brand yellow           */
-  --accent-hover:#e2bf00;
-  --dark:        #1a1a1a;   /* primary buttons        */
-  --sale:        #ff3e6c;   /* discount / price drop  */
-  --success:     #03a685;   /* extra-off / in stock   */
-  --danger:      #ff3e6c;
-  --danger-hover:#e22b56;
-  --radius:      8px;
-  --shadow:      0 6px 20px rgba(0, 0, 0, 0.08);
+  --surface-2:   #eaede3;   /* inputs / nested (sage) */
+  --border:      #e1e5d9;   /* hairlines              */
+  --text:        #26302a;   /* deep forest green text */
+  --text-muted:  #7a8273;   /* secondary (sage-grey)  */
+  --accent:      #7c8c68;   /* brand sage             */
+  --accent-hover:#6b7a58;
+  --dark:        #2e3a2b;   /* primary buttons (deep green) */
+  --sale:        #c2724e;   /* discount (terracotta)  */
+  --success:     #5b7a4f;   /* in stock / savings     */
+  --danger:      #c2724e;
+  --danger-hover:#a85e3d;
+  --rating:      #3e4a33;   /* star rating (deep green) */
+  --radius:      16px;      /* cards — soft, rounded  */
+  --radius-sm:   12px;
+  --radius-pill: 999px;
+  --shadow:      0 10px 30px rgba(40, 50, 35, 0.06);
+
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -38,12 +46,12 @@ a { color: var(--text); }
   background: #fff;
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: 12px 14px;
 }
 .form-control:focus {
-  border-color: var(--text);
-  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.08);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 140, 104, 0.18);
 }
 .form-control::placeholder { color: var(--text-muted); }
 .form-label {
@@ -60,15 +68,14 @@ a { color: var(--text); }
   border: none;
   color: #fff;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-radius: var(--radius);
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-pill);
   padding: 12px 26px;
   transition: background 0.2s ease, transform 0.15s ease;
 }
 .btn-primary:hover,
 .btn-success:hover {
-  background: #000;
+  background: #1f281c;
   color: #fff;
   transform: translateY(-1px);
 }

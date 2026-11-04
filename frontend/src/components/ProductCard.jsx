@@ -12,6 +12,11 @@ export default function ProductCard({ product }) {
   const { isWished, toggleWishlist } = useWishlist();
   const wished = isWished(product.id);
 
+  // Rating comes from the products API (avg of reviews). 0 = no reviews yet.
+  const rating = Number(product.rating) || 0;
+  const ratingCount = Number(product.ratingCount) || 0;
+  const fullStars = Math.round(rating);
+
   return (
     <Link to={`/products/${product.id}`} className="ss-card">
       <div className="ss-card-media">
@@ -49,6 +54,16 @@ export default function ProductCard({ product }) {
       <div className="ss-card-body">
         <p className="ss-brand">AXEN WEAR</p>
         <h3 className="ss-name">{product.title}</h3>
+        {ratingCount > 0 && (
+          <div className="ss-rating" aria-label={`Rated ${rating} out of 5`}>
+            <span className="ss-stars">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span key={n} className={n <= fullStars ? "on" : ""}>★</span>
+              ))}
+            </span>
+            <span className="ss-rating-count">{rating.toFixed(1)} ({ratingCount})</span>
+          </div>
+        )}
         <div className="ss-price-row">
           <span className="ss-price">₹{product.price}</span>
           {hasDiscount && <span className="ss-mrp">₹{mrp}</span>}

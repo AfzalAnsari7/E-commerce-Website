@@ -1,7 +1,7 @@
 .af { display: flex; flex-direction: column; gap: 16px; }
 .af-err {
-  background: #fff0f0;
-  border: 1px solid #f3c2c2;
+  background: #f7ece6;
+  border: 1px solid #e3c4b5;
   color: var(--sale);
   padding: 10px 14px;
   border-radius: var(--radius);

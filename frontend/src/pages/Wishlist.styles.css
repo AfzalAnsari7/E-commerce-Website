@@ -5,7 +5,7 @@
   max-width: 1240px;
   margin: 0 auto;
   padding: 48px 32px 80px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
 }
 .wl-head {
   display: flex;
@@ -86,7 +86,7 @@
   cursor: pointer;
   transition: background 0.2s ease;
 }
-.wl-move:hover { background: #000; }
+.wl-move:hover { background: #1f281c; }
 
 /* Empty */
 .wl-empty {
@@ -110,7 +110,7 @@
   text-transform: uppercase;
   text-decoration: none;
 }
-.wl-shop-btn:hover { background: #000; }
+.wl-shop-btn:hover { background: #1f281c; }
 
 @media (max-width: 900px) { .wl-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px) {

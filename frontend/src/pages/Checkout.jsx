@@ -149,7 +149,7 @@ export default function Checkout() {
         name: "Axen Wear",
         description: `Order ${data.orderId}`,
         prefill: { name: data.name, email: data.email, contact: data.contact },
-        theme: { color: "#1a1a1a" },
+        theme: { color: "#2e3a2b" },
         handler: async (resp) => {
           try {
             await api.post("/api/payment/verify", {

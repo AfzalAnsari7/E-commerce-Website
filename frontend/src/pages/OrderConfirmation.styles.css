@@ -5,7 +5,7 @@
   max-width: 880px;
   margin: 0 auto;
   padding: 40px 24px 80px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
 }
 .oc-msg {
   text-align: center;
@@ -152,7 +152,7 @@
   cursor: pointer;
   text-decoration: none;
 }
-.oc-btn:hover { background: #000; }
+.oc-btn:hover { background: #1f281c; }
 .oc-btn-light {
   background: #fff;
   color: var(--text);
@@ -228,12 +228,12 @@
   font-weight: 800;
 }
 .oc-step.done .oc-dot {
-  background: var(--success, #0a7);
-  border-color: var(--success, #0a7);
+  background: var(--success);
+  border-color: var(--success);
   color: #fff;
 }
 .oc-step.current .oc-dot {
-  box-shadow: 0 0 0 4px rgba(0, 170, 119, 0.18);
+  box-shadow: 0 0 0 4px rgba(91, 122, 79, 0.22);
 }
 .oc-step-txt { display: flex; flex-direction: column; gap: 2px; }
 .oc-step-txt strong { font-size: 0.78rem; }
@@ -314,6 +314,6 @@
 .oc-live {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--success, #0a7);
+  color: var(--success);
   letter-spacing: 0.03em;
 }

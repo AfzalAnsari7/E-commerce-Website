@@ -6,7 +6,7 @@
   top: 0;
   z-index: 1000;
   background: #fff;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
   border-bottom: 1px solid var(--border);
 }
 
@@ -80,7 +80,7 @@
   border-radius: 2px;
   transition: 0.2s ease;
 }
-.ss-burger:hover span { background: var(--sale); }
+.ss-burger:hover span { background: var(--accent); }
 
 .ss-nav { display: flex; gap: 28px; }
 .ss-nav-link {
@@ -98,7 +98,7 @@
   position: absolute;
   left: 0; bottom: 0;
   width: 0; height: 2px;
-  background: var(--sale);
+  background: var(--accent);
   transition: width 0.22s ease;
 }
 .ss-nav-link:hover::after,
@@ -183,7 +183,7 @@
   transition: color 0.2s ease;
 }
 .ss-account { position: relative; }
-.ss-action:hover { color: var(--sale); }
+.ss-action:hover { color: var(--accent); }
 .ss-action-label {
   font-size: 0.64rem;
   font-weight: 700;

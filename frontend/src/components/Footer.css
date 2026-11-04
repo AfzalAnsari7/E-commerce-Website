@@ -5,7 +5,7 @@
   background: var(--dark);
   color: #cfcfcf;
   padding: 56px 32px 30px;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-sans);
 }
 .ss-footer-cols {
   max-width: 1320px;

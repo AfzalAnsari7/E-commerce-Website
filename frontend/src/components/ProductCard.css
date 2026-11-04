@@ -1,7 +1,7 @@
 /* Product Card — The Souled Store style */
 .ss-card {
   display: block;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -57,23 +57,23 @@
   font-weight: 800;
   letter-spacing: 0.04em;
   padding: 5px 12px 5px 10px;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .ss-card-body { padding: 14px 14px 18px; }
 .ss-brand {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
   margin: 0 0 5px;
   text-transform: uppercase;
 }
 .ss-name {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin: 0 0 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 8px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -81,6 +81,25 @@
   overflow: hidden;
   min-height: 2.4em;
 }
+.ss-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+}
+.ss-stars {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--border);
+  line-height: 1;
+}
+.ss-stars .on { color: var(--rating); }
+.ss-rating-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .ss-price-row {
   display: flex;
   align-items: baseline;

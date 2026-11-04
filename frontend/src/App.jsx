@@ -18,6 +18,7 @@ import InfoPage from './pages/InfoPage'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
+import ChatWidget from './components/ChatWidget'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
 
@@ -55,6 +56,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <ChatWidget />
       </WishlistProvider>
     </CartProvider>
   )
